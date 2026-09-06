@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body>
+
+<meta name="design_doc_mode" content="canvas"><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&display=swap" rel="stylesheet"><style>
+body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+a{color:#2a78d6}a:hover{color:#1a5aa8}
+.w{border:1.5px solid #1a1a1a;background:#fff;border-radius:3px}
+.ph{background:repeating-linear-gradient(45deg,#e7e4de 0 6px,#f5f3ef 6px 12px);border:1.5px solid #1a1a1a;display:flex;align-items:center;justify-content:center;color:#6b675f;font:9px/1.3 ui-monospace,Menlo,monospace;text-align:center;padding:4px;box-sizing:border-box}
+.t{background:#dcd9d2;border-radius:2px;height:8px}
+.bt{border:1.5px solid #1a1a1a;background:#1a1a1a;color:#fff;font:600 10px system-ui;padding:6px 11px;border-radius:3px;display:inline-block}
+.bo{border:1.5px solid #1a1a1a;background:#fff;font:600 10px system-ui;padding:5px 10px;border-radius:3px;display:inline-block}
+.chip{border:1.2px solid #4a463f;border-radius:99px;font:10px system-ui;padding:3px 9px;color:#2a2721;white-space:nowrap}
+.sel{border:1.5px solid #1a1a1a;border-radius:3px;font:10px system-ui;padding:5px 8px;color:#4a463f;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.bat{font:700 12px ui-monospace,Menlo,monospace;color:#1f6b45}
+.lbl{font:9.5px ui-monospace,Menlo,monospace;color:#6b675f}
+.cap{font:600 10.5px ui-monospace,Menlo,monospace;color:#1a1a1a;margin:0 0 7px;letter-spacing:.02em}
+.scr{display:flex;gap:18px;align-items:flex-start;margin:0 0 30px}
+.hand{font-family:Caveat,cursive;color:#1a1a1a}
+.hd{font:700 11px system-ui;color:#1a1a1a}
+.cert{background:#1a1a1a;color:#fff;font:700 8.5px ui-monospace,Menlo,monospace;padding:2px 5px;letter-spacing:.04em;display:inline-block}
+.own{border:1.2px solid #6b675f;color:#4a463f;font:700 8.5px ui-monospace,Menlo,monospace;padding:1.5px 5px;letter-spacing:.04em;display:inline-block}
+.rowl{display:grid;grid-template-columns:1.5fr 1fr 1.1fr;gap:8px;padding:6px 0;border-bottom:1px solid #dcd9d2;font:10px system-ui;color:#2a2721;align-items:baseline}
+</style>
+
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">Revenue model &amp; admin — hybrid tiers, consignment only</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="3c">
+<div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Seller side + checkout — the quote fork, and what buying a certified bike actually looks like</div>
+<div class="dv-card" style="width:1120px;padding:20px 22px 4px">
+
+<div class="scr">
+<div><p class="cap">5 · SELL YOURS — THE FORK</p>
+<div class="w" style="width:520px;padding:12px">
+<div style="display:flex;align-items:center;gap:14px;margin-bottom:11px"><span class="hand" style="font-size:22px;font-weight:700">Revélo</span><span class="lbl">Bikes</span><span class="lbl">Service</span><span class="hd">Sell yours</span></div>
+<p class="hand" style="margin:0 0 4px;font-size:22px">What's it worth?</p>
+<div class="lbl" style="margin-bottom:10px">Four fields, then pick how much work you want to do.</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+<div><div class="lbl">Brand</div><div class="sel">EMotorad ▾</div></div><div><div class="lbl">Model</div><div class="sel">T-Rex+ ▾</div></div>
+<div><div class="lbl">Year</div><div class="sel">2023 ▾</div></div><div><div class="lbl">Km ridden</div><div class="sel">1,240</div></div>
+</div>
+<div class="w" style="padding:10px;background:#f7f5f1;margin-bottom:11px"><div class="lbl">Bikes like yours sold for</div><div style="font:700 18px system-ui">₹31,000 – ₹36,500</div><div class="lbl">based on 14 sales in Pune, last 90 days</div></div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+<div class="w" style="padding:10px">
+<span class="own" style="margin-bottom:7px">LIST IT YOURSELF</span>
+<div style="font:700 13px system-ui;margin:6px 0 2px">₹99</div><div class="lbl" style="margin-bottom:8px">one-time listing fee</div>
+<div class="lbl" style="line-height:1.7">Your photos, your price<br>You answer buyers<br>You handle the handover<br>Live in 10 minutes</div>
+<div style="border-top:1px solid #dcd9d2;margin:9px 0 7px"></div>
+<div class="lbl">You keep <b style="font:700 11px system-ui">₹34,401</b> of ₹34,500</div>
+<span class="bo" style="display:block;text-align:center;margin-top:9px">List it myself</span>
+</div>
+<div class="w" style="padding:10px;border-width:2.5px">
+<span class="cert" style="margin-bottom:7px">CERTIFY &amp; CONSIGN</span>
+<div style="font:700 13px system-ui;margin:6px 0 2px">8% when it sells</div><div class="lbl" style="margin-bottom:8px">free inspection · nothing upfront</div>
+<div class="lbl" style="line-height:1.7">We inspect and test the battery<br>We shoot it properly<br>We price it and talk to buyers<br>We deliver it and warranty it<br>You keep the bike till it sells</div>
+<div style="border-top:1px solid #dcd9d2;margin:9px 0 7px"></div>
+<div class="lbl">You keep <b style="font:700 11px system-ui">₹31,740</b> of ₹34,500 — and certified bikes sell <b>2× faster</b></div>
+<span class="bt" style="display:block;text-align:center;margin-top:9px">Book a free inspection</span>
+</div>
+</div>
+<div class="lbl" style="margin-top:9px;line-height:1.5">Either way the bike stays yours until a buyer pays. Withdraw a certified listing after inspection and the ₹1,499 inspection fee applies.</div>
+</div></div>
+
+<div><p class="cap">6 · CERTIFICATION EXPLAINER — 5 STEPS</p>
+<div class="w" style="width:280px;padding:11px">
+<p class="hand" style="margin:0 0 9px;font-size:19px">What "certified" buys you.</p>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;gap:8px"><span class="cert" style="height:fit-content">01</span><div><div class="hd">We collect it</div><div class="lbl">Free pickup within Pune</div></div></div>
+<div style="display:flex;gap:8px"><span class="cert" style="height:fit-content">02</span><div><div class="hd">42-point inspection</div><div class="lbl">Battery load-tested, cycles read off the BMS, not guessed</div></div></div>
+<div style="display:flex;gap:8px"><span class="cert" style="height:fit-content">03</span><div><div class="hd">We fix what fails</div><div class="lbl">Cost comes off the sale price, agreed with you first</div></div></div>
+<div style="display:flex;gap:8px"><span class="cert" style="height:fit-content">04</span><div><div class="hd">Photos and price</div><div class="lbl">Studio shots, price from real comps</div></div></div>
+<div style="display:flex;gap:8px"><span class="cert" style="height:fit-content">05</span><div><div class="hd">We sell and deliver</div><div class="lbl">You get paid within 24h of handover</div></div></div>
+</div>
+<div class="w" style="margin-top:10px;padding:9px;background:#f7f5f1"><div class="hd" style="margin-bottom:4px">The report the buyer sees</div><div class="ph" style="height:60px">42-point report sample</div></div>
+</div></div>
+
+<div><p class="cap">MOBILE · SELL</p>
+<div class="w" style="width:236px;padding:9px">
+<div style="display:flex;align-items:center;margin-bottom:8px"><span class="hand" style="font-size:18px;font-weight:700">Revélo</span><span style="margin-left:auto" class="lbl">☰</span></div>
+<p class="hand" style="margin:0 0 9px;font-size:19px">What's it worth?</p>
+<div class="sel" style="margin-bottom:5px">Brand ▾</div><div class="sel" style="margin-bottom:5px">Model ▾</div><div style="display:flex;gap:5px;margin-bottom:9px"><div class="sel" style="flex:1">Year ▾</div><div class="sel" style="flex:1">Km</div></div>
+<div class="w" style="padding:8px;background:#f7f5f1;margin-bottom:9px"><div class="lbl">Sold range</div><div style="font:700 15px system-ui">₹31,000–36,500</div></div>
+<div class="w" style="padding:9px;border-width:2.5px;margin-bottom:7px"><span class="cert">CERTIFY &amp; CONSIGN</span><div class="lbl" style="margin:6px 0 7px;line-height:1.6">8% on sale · we do everything · you keep ₹31,740</div><span class="bt" style="display:block;text-align:center">Free inspection</span></div>
+<div class="w" style="padding:9px"><span class="own">LIST IT MYSELF</span><div class="lbl" style="margin:6px 0 7px;line-height:1.6">₹99 · your photos, your buyers</div><span class="bo" style="display:block;text-align:center">List it</span></div>
+</div></div>
+</div>
+
+<div class="scr">
+<div><p class="cap">7 · CHECKOUT — CERTIFIED ONLY</p>
+<div class="w" style="width:400px;padding:12px">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px"><span class="hd">Reserve this bike</span><span class="lbl" style="margin-left:auto">Step 2 of 3</span></div>
+<div class="w" style="padding:9px;display:flex;gap:9px;margin-bottom:10px"><div class="ph" style="width:60px;height:46px">cover</div><div><div class="hd">EMotorad T-Rex+ · 2023</div><div class="lbl">92% battery · 42-point passed</div><span class="cert" style="margin-top:4px">CERTIFIED</span></div></div>
+<div class="hd" style="margin-bottom:5px">How you want it</div>
+<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">
+<div class="w" style="padding:7px;display:flex;align-items:center;gap:7px"><span class="lbl">◉</span><div><div class="hd" style="font-size:10px">Home delivery — Thu 11 Sep, 10am–1pm</div><div class="lbl">₹250 · Pune city</div></div></div>
+<div class="w" style="padding:7px;display:flex;align-items:center;gap:7px"><span class="lbl">○</span><div><div class="hd" style="font-size:10px">Pick up from the workshop</div><div class="lbl">Free · Baner, Mon–Sat 10–7</div></div></div>
+</div>
+<div class="hd" style="margin-bottom:5px">Warranty</div>
+<div style="display:flex;gap:5px;margin-bottom:10px"><div class="w" style="flex:1;padding:7px"><div class="lbl">Included</div><b style="font:700 10px system-ui">3 months</b></div><div class="w" style="flex:1;padding:7px;border-style:dashed"><div class="lbl">Extend to 6</div><b style="font:700 10px system-ui">+₹3,499</b></div><div class="w" style="flex:1;padding:7px;border-style:dashed"><div class="lbl">Annual care</div><b style="font:700 10px system-ui">+₹4,999</b></div></div>
+<div class="hd" style="margin-bottom:5px">Total</div>
+<div class="w" style="padding:9px">
+<div class="rowl" style="grid-template-columns:1fr auto"><span>Bike</span><b>₹34,500</b></div>
+<div class="rowl" style="grid-template-columns:1fr auto"><span>Buyer protection · 1.5%</span><b>₹518</b></div>
+<div class="rowl" style="grid-template-columns:1fr auto"><span>Delivery</span><b>₹250</b></div>
+<div class="rowl" style="grid-template-columns:1fr auto;border-bottom:0"><b>Payable now — reserve</b><b style="font:700 13px system-ui">₹2,000</b></div>
+<div class="lbl" style="margin-top:5px">Balance ₹33,268 on handover, or convert to EMI ₹1,890/mo</div>
+</div>
+<div style="display:flex;gap:6px;align-items:center;margin-top:10px"><span class="bt">Pay ₹2,000 &amp; reserve</span><span class="lbl" style="line-height:1.4">Refundable for 48h.<br>7-day return after handover.</span></div>
+</div></div>
+
+<div><p class="cap">8 · SERVICE BOOKING — OPEN TO ANYONE</p>
+<div class="w" style="width:400px;padding:12px">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><span class="hand" style="font-size:20px;font-weight:700">Revélo</span><span class="lbl">Bikes</span><span class="hd">Service</span></div>
+<p class="hand" style="margin:0 0 4px;font-size:21px">Any e-bike, any brand.</p>
+<div class="lbl" style="margin-bottom:10px">You don't have to have bought it here.</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:9px">
+<div class="w" style="padding:8px"><div class="hd">Tune-up</div><div class="lbl" style="margin:2px 0 5px">Gears, brakes, safety</div><b style="font:700 11px system-ui">from ₹899</b></div>
+<div class="w" style="padding:8px;border-width:2.5px"><div class="hd">Battery care</div><div class="lbl" style="margin:2px 0 5px">Load test, report, or replace</div><b style="font:700 11px system-ui">from ₹499</b></div>
+<div class="w" style="padding:8px"><div class="hd">Motor &amp; drive</div><div class="lbl" style="margin:2px 0 5px">Repair, firmware</div><b style="font:700 11px system-ui">from ₹2,400</b></div>
+<div class="w" style="padding:8px"><div class="hd">Pre-buy inspection</div><div class="lbl" style="margin:2px 0 5px">42 points, for a bike you found</div><b style="font:700 11px system-ui">₹999</b></div>
+</div>
+<div style="display:flex;gap:10px">
+<div style="flex:1">
+<div class="hd" style="margin-bottom:5px">Book a slot</div>
+<div class="sel" style="margin-bottom:5px">Bike brand + model</div>
+<div class="sel" style="margin-bottom:5px">What's wrong? ▾</div>
+<div class="sel" style="margin-bottom:5px">Workshop or pickup ▾</div>
+<div style="display:flex;gap:5px"><div class="sel" style="flex:1">Phone</div><span class="bt">Send</span></div>
+</div>
+<div style="width:130px"><div class="hd" style="margin-bottom:5px">Next available</div><div style="display:flex;flex-direction:column;gap:4px"><div class="w" style="padding:5px"><div class="lbl">Fri 5 Sep</div><b style="font:700 10px system-ui">4 slots</b></div><div class="w" style="padding:5px"><div class="lbl">Sat 6 Sep</div><b style="font:700 10px system-ui">1 slot</b></div></div><div class="lbl" style="margin-top:6px;line-height:1.5">Pickup ₹250/way, free on the annual plan</div></div>
+</div>
+<div class="w" style="margin-top:10px;padding:9px;background:#f7f5f1;display:flex;align-items:center;gap:10px"><div><div class="hd">Annual care plan — ₹4,999</div><div class="lbl">Two tune-ups, battery report, free pickup</div></div><span class="bt" style="margin-left:auto">Join</span></div>
+</div></div>
+</div>
+
+</div></div>
+
+
+<div class="dv-opt" id="3d">
+<div class="dv-olabel"><a class="dv-oid" href="#3d">3d</a>Admin — two different jobs: moderating listings we don't own, and pricing bikes we're consigning</div>
+<div class="dv-card" style="width:1120px;padding:20px 22px 4px">
+
+<div class="scr">
+<div><p class="cap">9 · MODERATION QUEUE — OWNER-LISTED</p>
+<div class="w" style="width:560px;padding:11px">
+<div style="display:flex;align-items:center;gap:9px;margin-bottom:10px"><span class="hd">Moderation</span><span class="chip">12 pending</span><span class="chip">3 flagged</span><span class="chip">41 live</span><span style="margin-left:auto" class="lbl">Auto-approved: 86%</span></div>
+<div class="rowl" style="grid-template-columns:1.6fr .8fr 1fr .9fr;border-bottom:1.5px solid #1a1a1a"><span class="lbl">LISTING</span><span class="lbl">ASKING</span><span class="lbl">CHECKS</span><span class="lbl">ACTION</span></div>
+<div class="rowl" style="grid-template-columns:1.6fr .8fr 1fr .9fr"><div><div class="hd">Nexzu Roadlark 2022</div><div class="lbl">Rahul S. · 4 photos · ₹99 paid</div></div><b>₹26,000</b><div class="lbl">✓ phone ✓ photos<br>✓ price in range</div><div style="display:flex;gap:4px"><span class="bt" style="padding:3px 7px">Approve</span><span class="bo" style="padding:3px 7px">Hold</span></div></div>
+<div class="rowl" style="grid-template-columns:1.6fr .8fr 1fr .9fr;background:#f7f5f1"><div><div class="hd">Hero Lectro F6i 2021 <span class="own">FLAG</span></div><div class="lbl">Anon · 1 photo · stock image?</div></div><b>₹8,000</b><div class="lbl">✗ photo reused<br>✗ price 62% below range</div><div style="display:flex;gap:4px"><span class="bo" style="padding:3px 7px">Reject</span><span class="bo" style="padding:3px 7px">Ask owner</span></div></div>
+<div class="rowl" style="grid-template-columns:1.6fr .8fr 1fr .9fr"><div><div class="hd">Ampere Reo+ 2021</div><div class="lbl">Priya M. · 6 photos · ₹99 paid</div></div><b>₹19,500</b><div class="lbl">✓ all checks<br><b>3rd listing this month</b></div><div style="display:flex;gap:4px"><span class="bt" style="padding:3px 7px">Approve</span><span class="bo" style="padding:3px 7px">Dealer?</span></div></div>
+<div class="rowl" style="grid-template-columns:1.6fr .8fr 1fr .9fr;border-bottom:0"><div><div class="hd">Motovolt Kivo 2023</div><div class="lbl">Sameer K. · 5 photos · ₹99 paid</div></div><b>₹44,900</b><div class="lbl">✓ all checks<br>price 9% above range</div><div style="display:flex;gap:4px"><span class="bt" style="padding:3px 7px">Approve</span><span class="bo" style="padding:3px 7px">Suggest ₹41k</span></div></div>
+<div class="w" style="margin-top:10px;padding:9px;border-style:dashed"><div class="hd" style="margin-bottom:4px">We moderate, we don't inspect</div><div class="lbl" style="line-height:1.5">Checks are on the listing, not the bike: real photos, contactable seller, price sanity, repeat-seller detection. Nothing here implies we've seen it.</div></div>
+</div></div>
+
+<div><p class="cap">MOBILE · SELLER SEES THE NUDGE</p>
+<div class="w" style="width:236px;padding:9px">
+<div class="hd" style="margin-bottom:8px">Your listing</div>
+<div class="w" style="padding:8px;display:flex;gap:8px;margin-bottom:9px"><div class="ph" style="width:50px;height:40px">cover</div><div><div class="hd">Nexzu Roadlark</div><div class="lbl">₹26,000 · live 18 days</div><span class="own" style="margin-top:3px">OWNER-LISTED</span></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:9px"><div class="w" style="padding:6px"><div class="lbl">Views</div><b style="font:700 12px system-ui">214</b></div><div class="w" style="padding:6px"><div class="lbl">Messages</div><b style="font:700 12px system-ui">3</b></div></div>
+<div class="w" style="padding:9px;border-width:2.5px"><div class="hd" style="margin-bottom:4px">18 days, no sale</div><div class="lbl" style="margin-bottom:7px;line-height:1.55">Certified bikes like yours sell in <b>9 days</b>. Free inspection, we handle buyers, you net ₹23,920 after 8%.</div><span class="bt" style="display:block;text-align:center">Upgrade to certified</span><div class="lbl" style="text-align:center;margin-top:5px">Keep it as-is</div></div>
+</div></div>
+
+<div><p class="cap">10 · CONSIGNMENT WORKSHEET (ADMIN)</p>
+<div class="w" style="width:290px;padding:11px">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:9px"><span class="hd">Consign · EMotorad T-Rex+</span><span class="lbl" style="margin-left:auto">#C-0142</span></div>
+<div class="w" style="padding:8px;margin-bottom:8px"><div class="lbl" style="margin-bottom:5px">INSPECTION</div><div class="hd" style="margin-bottom:3px">Passed 40 / 42</div><div class="lbl" style="line-height:1.5">Brake pads worn · rear bearing play<br>Repairs ₹1,150 — <b>owner approved</b></div></div>
+<div class="lbl" style="margin-bottom:3px">Battery — load tested, not claimed</div>
+<div class="w" style="height:20px;padding:0;display:flex;align-items:center;margin-bottom:9px"><div style="flex:1;height:3px;background:#1f6b45;margin:0 6px;position:relative"><span style="position:absolute;right:8%;top:-5px;width:11px;height:11px;background:#1a1a1a;border-radius:99px"></span></div><span class="bat" style="margin-right:7px">92%</span></div>
+<div class="w" style="padding:8px;background:#f7f5f1;margin-bottom:8px"><div class="lbl">Comps · 14 sales, 90 days</div><div style="font:700 14px system-ui">₹31,000 – ₹36,500</div><div class="lbl">battery &gt;90% adds ~₹2,400</div></div>
+<div><div class="lbl">List price — set with the owner</div><div class="sel" style="margin-bottom:8px">₹34,500 ▾ <span class="lbl">suggested</span></div></div>
+<div class="w" style="padding:9px">
+<div class="rowl" style="grid-template-columns:1fr auto"><span>List price</span><b>₹34,500</b></div>
+<div class="rowl" style="grid-template-columns:1fr auto"><span>Commission 8%</span><b>−₹2,760</b></div>
+<div class="rowl" style="grid-template-columns:1fr auto"><span>Repairs</span><b>−₹1,150</b></div>
+<div class="rowl" style="grid-template-columns:1fr auto"><span>Inspection</span><b>waived</b></div>
+<div class="rowl" style="grid-template-columns:1fr auto;border-bottom:0"><b>Owner nets</b><b style="font:700 13px system-ui">₹30,590</b></div>
+</div>
+<div style="display:flex;gap:6px;margin-top:9px;align-items:center"><span class="bt">Publish certified</span><span class="bo">Send to owner</span></div>
+<div class="lbl" style="margin-top:7px;line-height:1.5">Status: <b>in workshop</b> → photographed → live → reserved → delivered → owner paid</div>
+</div></div>
+</div>
+
+</div></div>
+
+</div>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Core screens · low-fi · ₹ / km · battery % as the card badge</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Spec Sheet — dense, data-first, reads like a parts catalogue</div>
+<div class="dv-card" style="width:1120px;padding:20px 22px 4px">
+
+<div class="scr">
+<div><p class="cap">1 · MARKETPLACE — DESKTOP</p>
+<div class="w" style="width:760px;padding:12px">
+<div style="display:flex;align-items:center;gap:14px;border-bottom:1.5px solid #1a1a1a;padding-bottom:9px;margin-bottom:11px">
+<span class="hand" style="font-size:22px;font-weight:700">Revélo</span>
+<span class="hd">Bikes</span><span class="lbl">Service</span><span class="lbl">About</span>
+<div class="sel" style="margin-left:auto;width:190px">⌕ Search brand, model or "cargo"</div><span class="bo">Sell your bike</span></div>
+<p class="hand" style="margin:0 0 10px;font-size:17px">30 inspected e-bikes, battery health on every one.</p>
+<div style="display:flex;gap:6px;margin-bottom:12px">
+<div class="sel" style="flex:1">Price ▾</div><div class="sel" style="flex:1">Battery ▾</div><div class="sel" style="flex:1">Brand ▾</div><div class="sel" style="flex:1">Year ▾</div><div class="sel" style="flex:1">Type ▾</div><div class="sel" style="flex:1">Km ▾</div>
+<div class="sel" style="width:96px">Sort: New ▾</div></div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+<div class="w" style="padding:7px"><div style="position:relative"><div class="ph" style="height:74px">bike photo 4:3</div><span class="w" style="position:absolute;top:4px;right:4px;padding:1px 5px"><span class="bat">92%</span></span></div><div class="hd" style="margin:6px 0 2px">EMotorad T-Rex+</div><div style="font:700 13px system-ui">₹34,500</div><div class="lbl">2023 · 1,240 km</div></div>
+<div class="w" style="padding:7px"><div style="position:relative"><div class="ph" style="height:74px">bike photo 4:3</div><span class="w" style="position:absolute;top:4px;right:4px;padding:1px 5px"><span class="bat">88%</span></span></div><div class="hd" style="margin:6px 0 2px">Motovolt Hum</div><div style="font:700 13px system-ui">₹41,000</div><div class="lbl">2022 · 3,900 km</div></div>
+<div class="w" style="padding:7px"><div style="position:relative"><div class="ph" style="height:74px">bike photo 4:3</div><span class="w" style="position:absolute;top:4px;right:4px;padding:1px 5px"><span class="bat">79%</span></span></div><div class="hd" style="margin:6px 0 2px">Hero Lectro F6i</div><div style="font:700 13px system-ui">₹22,800</div><div class="lbl">2021 · 6,150 km</div></div>
+<div class="w" style="padding:7px"><div style="position:relative"><div class="ph" style="height:74px">bike photo 4:3</div><span class="w" style="position:absolute;top:4px;right:4px;padding:1px 5px"><span class="bat">95%</span></span></div><div class="hd" style="margin:6px 0 2px">Ninety One Meraki</div><div style="font:700 13px system-ui">₹38,200</div><div class="lbl">2024 · 640 km</div></div>
+<div class="w" style="padding:7px"><div class="ph" style="height:74px">bike photo</div><div class="hd" style="margin:6px 0 2px">Nexzu Roadlark</div><div style="font:700 13px system-ui">₹26,000</div><div class="lbl">2022 · 4,410 km</div></div>
+<div class="w" style="padding:7px"><div class="ph" style="height:74px">bike photo</div><div class="hd" style="margin:6px 0 2px">Ampere Reo+</div><div style="font:700 13px system-ui">₹19,500</div><div class="lbl">2021 · 8,020 km</div></div>
+<div class="w" style="padding:7px"><div class="ph" style="height:74px">bike photo</div><div class="hd" style="margin:6px 0 2px">Motovolt Kivo</div><div style="font:700 13px system-ui">₹44,900</div><div class="lbl">2023 · 2,100 km</div></div>
+<div class="w" style="padding:7px"><div class="ph" style="height:74px">bike photo</div><div class="hd" style="margin:6px 0 2px">EMotorad Doodle</div><div style="font:700 13px system-ui">₹31,400</div><div class="lbl">2023 · 1,880 km</div></div>
+</div>
+<p class="lbl" style="margin:10px 0 0;text-align:center">— 8 of 27 · load more —</p>
+</div></div>
+<div><p class="cap">MOBILE</p>
+<div class="w" style="width:236px;padding:9px">
+<div style="display:flex;align-items:center;gap:8px;border-bottom:1.5px solid #1a1a1a;padding-bottom:7px;margin-bottom:8px"><span class="hand" style="font-size:18px;font-weight:700">Revélo</span><span style="margin-left:auto" class="lbl">☰</span></div>
+<p class="hand" style="margin:0 0 8px;font-size:14px">30 inspected e-bikes.</p>
+<div style="display:flex;gap:5px;margin-bottom:9px"><div class="sel" style="flex:1">Search bikes</div><div class="bo">Filters</div></div>
+<div style="display:flex;gap:4px;margin-bottom:9px;overflow:hidden"><span class="chip">Under ₹30k</span><span class="chip">90%+</span><span class="chip">City</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+<div class="w" style="padding:6px"><div class="ph" style="height:56px">photo</div><div class="hd" style="margin:5px 0 2px;font-size:10px">EMotorad T-Rex+</div><div style="font:700 12px system-ui">₹34,500</div><div class="lbl">2023 · <span class="bat" style="font-size:10px">92%</span></div></div>
+<div class="w" style="padding:6px"><div class="ph" style="height:56px">photo</div><div class="hd" style="margin:5px 0 2px;font-size:10px">Motovolt Hum</div><div style="font:700 12px system-ui">₹41,000</div><div class="lbl">2022 · <span class="bat" style="font-size:10px">88%</span></div></div>
+<div class="w" style="padding:6px"><div class="ph" style="height:56px">photo</div><div class="hd" style="margin:5px 0 2px;font-size:10px">Hero Lectro F6i</div><div style="font:700 12px system-ui">₹22,800</div><div class="lbl">2021 · <span class="bat" style="font-size:10px">79%</span></div></div>
+<div class="w" style="padding:6px"><div class="ph" style="height:56px">photo</div><div class="hd" style="margin:5px 0 2px;font-size:10px">Ninety One Meraki</div><div style="font:700 12px system-ui">₹38,200</div><div class="lbl">2024 · <span class="bat" style="font-size:10px">95%</span></div></div>
+</div></div></div>
+</div>
+
+<div class="scr">
+<div><p class="cap">2 · BIKE DETAIL — DESKTOP</p>
+<div class="w" style="width:760px;padding:12px">
+<p class="lbl" style="margin:0 0 9px">Bikes / City / EMotorad T-Rex+ 2023</p>
+<div style="display:flex;gap:14px">
+<div style="width:400px">
+<div class="ph" style="height:210px">main photo — drive side, full bike</div>
+<div style="display:flex;gap:6px;margin-top:6px"><div class="ph" style="flex:1;height:46px">cockpit</div><div class="ph" style="flex:1;height:46px">battery</div><div class="ph" style="flex:1;height:46px">drivetrain</div><div class="ph" style="flex:1;height:46px">wear marks</div></div>
+</div>
+<div style="flex:1">
+<div style="font:700 15px system-ui">EMotorad T-Rex+</div>
+<div class="lbl" style="margin:2px 0 8px">2023 · City / hardtail · Frame M (18")</div>
+<div style="font:700 22px system-ui">₹34,500</div>
+<div class="w" style="margin:9px 0;padding:8px;display:flex;align-items:center;gap:9px"><span class="bat" style="font-size:20px">92%</span><span class="lbl">battery health<br>tested 12 Aug · 480 cycles</span></div>
+<div style="display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font:10px system-ui;color:#2a2721;border-top:1.5px solid #1a1a1a;padding-top:8px">
+<span class="lbl">Km ridden</span><span>1,240 km</span><span class="lbl">Range</span><span>~55 km / charge</span><span class="lbl">Motor</span><span>250W rear hub</span><span class="lbl">Frame size</span><span>M (18") · rider 5'6"–5'11"</span><span class="lbl">Serviced</span><span>Full tune-up, new brake pads</span></div>
+<div style="display:flex;gap:6px;margin-top:10px"><span class="bt">Inquire about this bike</span><span class="bo">WhatsApp</span></div>
+<div class="w" style="margin-top:8px;padding:7px"><span class="lbl">✓ 42-point inspection · 3-month warranty</span></div>
+</div></div>
+<div style="border-top:1.5px solid #1a1a1a;margin-top:12px;padding-top:9px">
+<div class="hd" style="margin-bottom:6px">Condition notes</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px">
+<div class="t" style="width:96%"></div><div class="t" style="width:88%"></div><div class="t" style="width:90%"></div><div class="t" style="width:70%"></div>
+<span class="lbl">Frame — light scuff on downtube, photo 4</span><span class="lbl">Tyres — 80% tread, original</span></div>
+</div></div></div>
+<div><p class="cap">MOBILE</p>
+<div class="w" style="width:236px;padding:0 0 8px">
+<div class="ph" style="height:132px;border:0;border-bottom:1.5px solid #1a1a1a">swipeable gallery 1/9 ● ○ ○</div>
+<div style="padding:9px">
+<div style="font:700 12px system-ui">EMotorad T-Rex+</div><div class="lbl" style="margin:2px 0 6px">2023 · Frame M · 1,240 km</div>
+<div style="font:700 17px system-ui">₹34,500</div>
+<div class="w" style="margin:8px 0;padding:6px;display:flex;gap:7px;align-items:center"><span class="bat" style="font-size:16px">92%</span><span class="lbl">battery health<br>480 cycles</span></div>
+<div style="display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font:9.5px system-ui"><span class="lbl">Range</span><span>~55 km</span><span class="lbl">Motor</span><span>250W hub</span><span class="lbl">Warranty</span><span>3 months</span></div>
+<div class="hd" style="margin:9px 0 5px">Condition notes</div>
+<div class="t" style="width:100%;margin-bottom:3px"></div><div class="t" style="width:86%;margin-bottom:3px"></div><div class="t" style="width:92%"></div>
+</div>
+<div style="border-top:1.5px solid #1a1a1a;padding:8px 9px 0;display:flex;gap:6px"><span class="bt" style="flex:1;text-align:center">Inquire</span><span class="bo">Call</span></div>
+<p class="lbl" style="margin:6px 9px 0">↑ sticky bar, always visible</p>
+</div></div>
+</div>
+
+<div class="scr">
+<div><p class="cap">3 · SERVICE HOMEPAGE — DESKTOP</p>
+<div class="w" style="width:760px;padding:12px">
+<div style="display:flex;align-items:center;gap:14px;border-bottom:1.5px solid #1a1a1a;padding-bottom:9px;margin-bottom:12px"><span class="hand" style="font-size:22px;font-weight:700">Revélo</span><span class="lbl">Bikes</span><span class="hd">Service</span><span class="lbl">About</span><div class="sel" style="margin-left:auto;width:190px">⌕ Search brand, model or "cargo"</div><span class="bo">Book a slot</span></div>
+<div style="display:flex;gap:16px;margin-bottom:14px"><div style="flex:1"><p class="hand" style="margin:0 0 6px;font-size:26px;line-height:1.15">We fix e-bikes, and we sell the good ones on.</p><div class="t" style="width:92%;margin-bottom:3px"></div><div class="t" style="width:78%"></div><div style="display:flex;gap:6px;margin-top:11px"><span class="bt">Browse 27 used bikes →</span><span class="bo">Book a repair</span></div></div><div class="ph" style="width:270px;height:120px">workshop photo — bike on stand</div></div>
+<div class="hd" style="border-top:1.5px solid #1a1a1a;padding-top:9px;margin-bottom:6px">Services — starting prices</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 20px;font:10px system-ui">
+<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #b8b4ac;padding:5px 0"><span>Tune-up (safety + gears + brakes)</span><b>from ₹899</b></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #b8b4ac;padding:5px 0"><span>Battery diagnostics</span><b>from ₹499</b></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #b8b4ac;padding:5px 0"><span>Brake service</span><b>from ₹649</b></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #b8b4ac;padding:5px 0"><span>Battery replacement</span><b>from ₹7,500</b></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #b8b4ac;padding:5px 0"><span>Motor repair</span><b>from ₹2,400</b></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #b8b4ac;padding:5px 0"><span>Firmware &amp; diagnostics</span><b>from ₹399</b></div>
+<div style="display:flex;justify-content:space-between;padding:5px 0"><span>Pickup &amp; delivery</span><b>₹250 / way</b></div>
+<div style="display:flex;justify-content:space-between;padding:5px 0"><span>Annual care plan</span><b>₹4,999 / yr</b></div>
+</div>
+<div style="display:flex;gap:12px;border-top:1.5px solid #1a1a1a;margin-top:11px;padding-top:10px">
+<div style="flex:1"><div class="hd" style="margin-bottom:5px">Come by the shop</div><div class="t" style="width:70%;margin-bottom:3px"></div><div class="t" style="width:55%;margin-bottom:3px"></div><div class="lbl">Mon–Sat 10–7 · +91 · hello@revelo.in</div></div>
+<div class="ph" style="flex:1;height:74px">map placeholder</div>
+<div style="flex:1"><div class="sel" style="margin-bottom:5px">Your bike + issue</div><div class="sel" style="margin-bottom:5px">Phone</div><span class="bt">Request a slot</span></div>
+</div></div></div>
+<div><p class="cap">MOBILE</p>
+<div class="w" style="width:236px;padding:9px">
+<div style="display:flex;align-items:center;border-bottom:1.5px solid #1a1a1a;padding-bottom:7px;margin-bottom:9px"><span class="hand" style="font-size:18px;font-weight:700">Revélo</span><span style="margin-left:auto" class="lbl">☰</span></div>
+<div class="sel" style="margin-bottom:9px">⌕ Search bikes</div>
+<p class="hand" style="margin:0 0 7px;font-size:19px;line-height:1.15">We fix e-bikes, and we sell the good ones on.</p>
+<div class="t" style="width:95%;margin-bottom:3px"></div><div class="t" style="width:72%"></div>
+<div style="display:flex;flex-direction:column;gap:5px;margin:10px 0"><span class="bt" style="text-align:center">Browse 27 used bikes →</span><span class="bo" style="text-align:center">Book a repair</span></div>
+<div class="ph" style="height:80px;margin-bottom:10px">workshop photo</div>
+<div class="hd" style="margin-bottom:5px">Services</div>
+<div style="font:9.5px system-ui">
+<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #b8b4ac;padding:4px 0"><span>Tune-up</span><b>₹899+</b></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #b8b4ac;padding:4px 0"><span>Battery diagnostics</span><b>₹499+</b></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #b8b4ac;padding:4px 0"><span>Brake service</span><b>₹649+</b></div>
+<div style="display:flex;justify-content:space-between;padding:4px 0"><span>+ 5 more</span><b>›</b></div></div>
+<div class="hd" style="margin:9px 0 5px">Contact</div><div class="ph" style="height:60px;margin-bottom:6px">map</div><span class="bt" style="display:block;text-align:center">Request a slot</span>
+</div></div>
+</div>
+
+<div class="scr">
+<div><p class="cap">4 · ADMIN — INVENTORY LIST (DESKTOP ONLY)</p>
+<div class="w" style="width:520px;padding:11px">
+<div style="display:flex;align-items:center;gap:9px;margin-bottom:9px"><span class="hd">Inventory · 27 live</span><span class="lbl">2 drafts</span><span style="margin-left:auto" class="bt">+ Add bike</span></div>
+<div style="display:flex;gap:5px;margin-bottom:8px"><div class="sel" style="flex:1">Search brand / model</div><div class="sel" style="width:82px">Status ▾</div></div>
+<div style="display:grid;grid-template-columns:34px 1.5fr .7fr .5fr .6fr auto;gap:0;font:9.5px system-ui">
+<div class="lbl" style="padding:4px 0;border-bottom:1.5px solid #1a1a1a"></div><div class="lbl" style="padding:4px 0;border-bottom:1.5px solid #1a1a1a">Bike</div><div class="lbl" style="padding:4px 0;border-bottom:1.5px solid #1a1a1a">Price</div><div class="lbl" style="padding:4px 0;border-bottom:1.5px solid #1a1a1a">Batt</div><div class="lbl" style="padding:4px 0;border-bottom:1.5px solid #1a1a1a">Status</div><div class="lbl" style="padding:4px 0;border-bottom:1.5px solid #1a1a1a">Actions</div>
+<div style="padding:5px 0;border-bottom:1px dashed #cfcbc3"><div class="ph" style="height:20px;font-size:0">.</div></div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3"><b>EMotorad T-Rex+</b><br><span class="lbl">2023 · 1,240 km</span></div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3">₹34,500</div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3"><span class="bat" style="font-size:10px">92%</span></div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3">Live</div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3;display:flex;gap:4px"><span class="bo" style="padding:2px 6px">Edit</span><span class="bo" style="padding:2px 6px">Del</span></div>
+<div style="padding:5px 0;border-bottom:1px dashed #cfcbc3"><div class="ph" style="height:20px;font-size:0">.</div></div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3"><b>Motovolt Hum</b><br><span class="lbl">2022 · 3,900 km</span></div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3">₹41,000</div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3"><span class="bat" style="font-size:10px">88%</span></div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3">Live</div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3;display:flex;gap:4px"><span class="bo" style="padding:2px 6px">Edit</span><span class="bo" style="padding:2px 6px">Del</span></div>
+<div style="padding:5px 0;border-bottom:1px dashed #cfcbc3"><div class="ph" style="height:20px;font-size:0">.</div></div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3"><b>Hero Lectro F6i</b><br><span class="lbl">2021 · 6,150 km</span></div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3">₹22,800</div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3"><span class="bat" style="font-size:10px">79%</span></div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3">Draft</div><div style="padding:5px 0;border-bottom:1px dashed #cfcbc3;display:flex;gap:4px"><span class="bo" style="padding:2px 6px">Edit</span><span class="bo" style="padding:2px 6px">Del</span></div>
+<div style="padding:5px 0"><div class="ph" style="height:20px;font-size:0">.</div></div><div style="padding:5px 0"><b>Ninety One Meraki</b><br><span class="lbl">2024 · 640 km</span></div><div style="padding:5px 0">₹38,200</div><div style="padding:5px 0"><span class="bat" style="font-size:10px">95%</span></div><div style="padding:5px 0">Sold</div><div style="padding:5px 0;display:flex;gap:4px"><span class="bo" style="padding:2px 6px">Edit</span><span class="bo" style="padding:2px 6px">Del</span></div>
+</div></div></div>
+<div><p class="cap">ADD / EDIT — FULL PAGE, PHOTOS FIRST</p>
+<div class="w" style="width:400px;padding:11px">
+<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:9px"><span class="hd">Edit · EMotorad T-Rex+</span><span style="margin-left:auto" class="lbl">Preview listing ↗</span></div>
+<div class="w" style="border-style:dashed;padding:10px;text-align:center;margin-bottom:9px"><div class="lbl">drop photos here — 9 max, first is cover</div><div style="display:flex;gap:5px;justify-content:center;margin-top:7px"><div class="ph" style="width:56px;height:42px">1</div><div class="ph" style="width:56px;height:42px">2</div><div class="ph" style="width:56px;height:42px">3</div><div class="ph" style="width:56px;height:42px">4</div></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+<div><div class="lbl">Brand</div><div class="sel">EMotorad ▾</div></div><div><div class="lbl">Model</div><div class="sel">T-Rex+</div></div>
+<div><div class="lbl">Price ₹</div><div class="sel">34,500</div></div><div><div class="lbl">Year</div><div class="sel">2023 ▾</div></div>
+<div><div class="lbl">Km ridden</div><div class="sel">1,240</div></div><div><div class="lbl">Frame size</div><div class="sel">M (18") ▾</div></div>
+</div>
+<div style="margin-top:7px"><div class="lbl">Battery health — slider, shows on the card</div><div class="w" style="height:20px;padding:0;display:flex;align-items:center"><div style="flex:1;height:3px;background:#1f6b45;margin:0 6px;position:relative"><span style="position:absolute;right:8%;top:-5px;width:11px;height:11px;background:#1a1a1a;border-radius:99px"></span></div><span class="bat" style="margin-right:7px">92%</span></div></div>
+<div style="margin-top:7px"><div class="lbl">Condition notes</div><div class="w" style="height:40px;padding:5px"><div class="t" style="width:84%;margin-bottom:4px"></div><div class="t" style="width:62%"></div></div></div>
+<div style="display:flex;gap:6px;margin-top:10px;align-items:center"><span class="bt">Save changes</span><span class="bo">Mark as sold</span><span class="lbl" style="margin-left:auto">Delete</span></div>
+</div></div>
+</div>
+
+</div></div>
+
+</div>
+</section>
+
+
+
+<!--
+-->
+</body>
+</html>

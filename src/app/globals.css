@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+:root {
+  /* Warm, editorial neutrals — not the wireframe's beige/black */
+  --color-paper: #faf8f4;
+  --color-surface: #ffffff;
+  --color-ink: #17181c;
+  --color-muted: #6b6a66;
+  --color-line: #e6e3da;
+
+  /* Battery health is the primary trust signal on every card — it needs to
+     read as confident and unambiguous. */
+  --color-battery: #1a7a4c;
+  --color-battery-bg: #eaf5ee;
+
+  /* Certified vs self-listed must be visually distinct and unmissable.
+     Certified reads as a filled "stamp"; self-listed as an outline. */
+  --color-certified: #17181c;
+  --color-certified-fg: #faf8f4;
+  --color-self: #17181c;
+
+  --color-flag-bg: #fdf3e7;
+  --color-flag-fg: #92400e;
+  --color-danger: #b3261e;
+
+  --radius-card: 14px;
+  --radius-control: 10px;
+  --radius-pill: 999px;
+}
+
+@theme inline {
+  --color-paper: var(--color-paper);
+  --color-surface: var(--color-surface);
+  --color-ink: var(--color-ink);
+  --color-muted: var(--color-muted);
+  --color-line: var(--color-line);
+  --color-battery: var(--color-battery);
+  --color-battery-bg: var(--color-battery-bg);
+  --color-certified: var(--color-certified);
+  --color-certified-fg: var(--color-certified-fg);
+  --color-self: var(--color-self);
+  --color-flag-bg: var(--color-flag-bg);
+  --color-flag-fg: var(--color-flag-fg);
+  --color-danger: var(--color-danger);
+
+  --radius-card: var(--radius-card);
+  --radius-control: var(--radius-control);
+  --radius-pill: var(--radius-pill);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper: #121212;
+    --color-surface: #1a1a1a;
+    --color-ink: #f3f2ee;
+    --color-muted: #a3a19a;
+    --color-line: #2d2c28;
+    --color-battery: #3fbf7f;
+    --color-battery-bg: #143324;
+    --color-certified: #f3f2ee;
+    --color-certified-fg: #121212;
+    --color-self: #f3f2ee;
+    --color-flag-bg: #2e2109;
+    --color-flag-fg: #f2b96a;
+  }
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
