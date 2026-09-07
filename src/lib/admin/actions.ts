@@ -179,7 +179,13 @@ export async function startWorksheet(submissionId: string) {
       type: submission.type,
       price: listPrice,
       listing_type: "certified",
-      photos: submission.seller_photos ?? [],
+      // certify-path submissions never collect photos (that's the whole
+      // point — Revélo shoots them during the worksheet) — placeholder
+      // until real studio shots are added via the worksheet/edit screen.
+      photos:
+        submission.seller_photos && submission.seller_photos.length > 0
+          ? submission.seller_photos
+          : [PLACEHOLDER_PHOTO],
       status: "in_workshop",
     })
     .select("id")

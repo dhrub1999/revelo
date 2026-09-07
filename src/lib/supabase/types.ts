@@ -153,6 +153,11 @@ export interface Database {
           serviced_note: string | null;
           status: BikeStatus;
           certified_live_since: string | null;
+          // Added post-P0 (see 0009_bikes_pending_certification.sql): P3's
+          // seller self-service edit flow can request certification on an
+          // already-live self-listed bike without changing the bike itself
+          // — this flags it on the seller's own listings page.
+          pending_certification: boolean;
           created_at: string;
         };
         Insert: {
@@ -176,6 +181,7 @@ export interface Database {
           serviced_note?: string | null;
           status?: BikeStatus;
           certified_live_since?: string | null;
+          pending_certification?: boolean;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["bikes"]["Insert"]>;
@@ -381,7 +387,7 @@ export interface Database {
         Row: {
           id: string;
           recipient_role: NotificationRecipientRole;
-          recipient_id: string;
+          recipient_id: string | null;
           type: string;
           body: string;
           read: boolean;
@@ -390,7 +396,7 @@ export interface Database {
         Insert: {
           id?: string;
           recipient_role: NotificationRecipientRole;
-          recipient_id: string;
+          recipient_id: string | null;
           type: string;
           body: string;
           read?: boolean;
@@ -401,7 +407,14 @@ export interface Database {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      // 0010_book_inspection_slot_fn.sql — atomically claims one inspection
+      // slot; returns false (not an error) when none is left.
+      book_inspection_slot: {
+        Args: { p_date: string };
+        Returns: boolean;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
