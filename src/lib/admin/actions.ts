@@ -407,6 +407,101 @@ export async function deleteBike(bikeId: string) {
   revalidatePath("/admin/inventory");
 }
 
+// ── Aging-stock offers (certified-only, P5) ──────────────────────────────
+
+async function notifySellerOfOffer(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  offerId: string,
+  type: string,
+  bodyFor: (brand: string, model: string) => string,
+) {
+  const { data: offer, error } = await supabase
+    .from("offers")
+    .select("bike_id")
+    .eq("id", offerId)
+    .single();
+  if (error) throw error;
+
+  const { data: bike, error: bikeError } = await supabase
+    .from("bikes")
+    .select("seller_id, brand, model")
+    .eq("id", offer.bike_id)
+    .single();
+  if (bikeError) throw bikeError;
+
+  await notifySeller(supabase, bike.seller_id, type, bodyFor(bike.brand, bike.model));
+  return offer.bike_id;
+}
+
+export async function acceptOffer(offerId: string) {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  // 0012_checkout_offer_fns.sql — creates the reservations row directly
+  // (pickup/included defaults, no wizard session) and flips the bike to
+  // 'reserved', per P5-certified-commerce.md.
+  const { data: reservationId, error } = await supabase.rpc("accept_offer", {
+    p_offer_id: offerId,
+  });
+  if (error) throw error;
+  if (!reservationId) throw new Error("That offer can no longer be accepted.");
+
+  const bikeId = await notifySellerOfOffer(
+    supabase,
+    offerId,
+    "offer_accepted",
+    (brand, model) => `Revélo accepted an offer on your ${brand} ${model} — it's reserved.`,
+  );
+
+  revalidatePath("/admin/offers");
+  revalidatePath("/admin/inventory");
+  revalidatePath(`/bikes/${bikeId}`);
+  revalidatePath("/");
+}
+
+export async function counterOffer(offerId: string, counterPrice: number) {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("offers")
+    .update({ status: "countered", counter_price: counterPrice })
+    .eq("id", offerId)
+    .in("status", ["pending", "countered"]);
+  if (error) throw error;
+
+  await notifySellerOfOffer(
+    supabase,
+    offerId,
+    "offer_countered",
+    (brand, model) =>
+      `Revélo countered a buyer's offer on your ${brand} ${model} at ₹${counterPrice.toLocaleString("en-IN")}.`,
+  );
+
+  revalidatePath("/admin/offers");
+}
+
+export async function rejectOffer(offerId: string) {
+  await requireAdmin();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("offers")
+    .update({ status: "rejected" })
+    .eq("id", offerId)
+    .in("status", ["pending", "countered"]);
+  if (error) throw error;
+
+  await notifySellerOfOffer(
+    supabase,
+    offerId,
+    "offer_rejected",
+    (brand, model) => `Revélo declined a buyer's offer on your ${brand} ${model}.`,
+  );
+
+  revalidatePath("/admin/offers");
+}
+
 // ── Photo upload ──────────────────────────────────────────────────────────
 
 export async function uploadBikePhoto(

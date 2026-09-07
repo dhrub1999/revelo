@@ -58,6 +58,30 @@ export function MobileNav({ user }: { user: CurrentUser | null }) {
           </SheetClose>
           {user ? (
             <>
+              <SheetClose
+                render={
+                  <Link href="/messages" className="border-b border-line-subtle py-3" />
+                }
+                nativeButton={false}
+              >
+                Messages
+              </SheetClose>
+              <SheetClose
+                render={
+                  <Link href="/test-rides" className="border-b border-line-subtle py-3" />
+                }
+                nativeButton={false}
+              >
+                Test rides
+              </SheetClose>
+              <SheetClose
+                render={
+                  <Link href="/offers" className="border-b border-line-subtle py-3" />
+                }
+                nativeButton={false}
+              >
+                Offers
+              </SheetClose>
               {user.role === "seller" && (
                 <SheetClose
                   render={

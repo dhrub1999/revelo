@@ -44,6 +44,15 @@ export async function SiteHeader() {
         <div className="hidden items-center gap-3 text-sm text-muted md:flex">
           {user ? (
             <>
+              <Link href="/messages" className="transition-colors hover:text-ink">
+                Messages
+              </Link>
+              <Link href="/test-rides" className="transition-colors hover:text-ink">
+                Test rides
+              </Link>
+              <Link href="/offers" className="transition-colors hover:text-ink">
+                Offers
+              </Link>
               {user.role === "seller" && (
                 <Link href="/seller" className="transition-colors hover:text-ink">
                   My listings
