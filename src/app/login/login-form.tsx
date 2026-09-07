@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import type { Role } from "@/lib/supabase/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
-export function LoginForm({ next }: { next: string }) {
+export function LoginForm({ next, role = "buyer" }: { next: string; role?: Role }) {
   const router = useRouter();
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [email, setEmail] = useState("");
@@ -27,7 +28,7 @@ export function LoginForm({ next }: { next: string }) {
         : await supabase.auth.signUp({
             email,
             password,
-            options: { data: { role: "buyer" } },
+            options: { data: { role } },
           });
 
     setLoading(false);
@@ -90,7 +91,7 @@ export function LoginForm({ next }: { next: string }) {
         className="h-auto justify-start p-0 text-sm text-brand"
       >
         {mode === "sign-in"
-          ? "New here? Create a buyer account"
+          ? `New here? Create a ${role} account`
           : "Already have an account? Sign in"}
       </Button>
     </form>

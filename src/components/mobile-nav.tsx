@@ -4,6 +4,8 @@ import Link from "next/link";
 import { List } from "@phosphor-icons/react/dist/ssr/List";
 import { Logomark } from "@/components/logomark";
 import { Button } from "@/components/ui/button";
+import { signOut } from "@/lib/supabase/actions";
+import type { CurrentUser } from "@/lib/supabase/auth";
 import {
   Sheet,
   SheetTrigger,
@@ -13,7 +15,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 
-export function MobileNav() {
+export function MobileNav({ user }: { user: CurrentUser | null }) {
   return (
     <Sheet>
       <SheetTrigger
@@ -34,6 +36,7 @@ export function MobileNav() {
         <nav className="flex flex-col px-4 py-2 text-sm">
           <SheetClose
             render={<Link href="/" className="border-b border-line-subtle py-3" />}
+            nativeButton={false}
           >
             Bikes
           </SheetClose>
@@ -41,12 +44,51 @@ export function MobileNav() {
             render={
               <Link href="/service" className="border-b border-line-subtle py-3" />
             }
+            nativeButton={false}
           >
             Service
           </SheetClose>
-          <SheetClose render={<Link href="/about" className="py-3" />}>
+          <SheetClose
+            render={
+              <Link href="/about" className="border-b border-line-subtle py-3" />
+            }
+            nativeButton={false}
+          >
             About
           </SheetClose>
+          {user ? (
+            <>
+              {user.role === "seller" && (
+                <SheetClose
+                  render={
+                    <Link href="/seller" className="border-b border-line-subtle py-3" />
+                  }
+                  nativeButton={false}
+                >
+                  My listings
+                </SheetClose>
+              )}
+              {user.role === "admin" && (
+                <SheetClose
+                  render={
+                    <Link href="/admin" className="border-b border-line-subtle py-3" />
+                  }
+                  nativeButton={false}
+                >
+                  Admin
+                </SheetClose>
+              )}
+              <form action={signOut}>
+                <button type="submit" className="w-full py-3 text-left">
+                  Sign out
+                </button>
+              </form>
+            </>
+          ) : (
+            <SheetClose render={<Link href="/login" className="py-3" />} nativeButton={false}>
+              Sign in
+            </SheetClose>
+          )}
         </nav>
       </SheetContent>
     </Sheet>

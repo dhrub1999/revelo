@@ -53,6 +53,13 @@ see P2/P3).
   - certified: `'in_workshop' | 'photographed' | 'live' | 'reserved' | 'delivered' | 'paid_out'`
 - `certified_live_since` — timestamp, certified only. Drives the 60-day offer eligibility
   (see P5).
+- `pending_certification` — bool, added post-P0 (see
+  `supabase/migrations/0009_bikes_pending_certification.sql`): P3's seller
+  self-service edit flow lets a seller request certification on an
+  already-live self-listed bike. That creates a fresh `sell_submissions` row
+  for the P2 consignment worksheet, exactly like a new Sell Yours submission
+  — but the original bike stays live and self-listed until admin starts the
+  worksheet, so this just flags it on the seller's own listings page.
 
 ## certifications
 One per certified bike, produced by the consignment worksheet (P2).

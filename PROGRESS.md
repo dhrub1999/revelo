@@ -18,13 +18,13 @@ starting the next one.
 | P0 | Foundations (schema, RLS, storage, scaffold) | ✅ Done |
 | P1 | Buyer core (marketplace grid, bike detail, login) | ✅ Done |
 | P2 | Admin core (inventory, moderation, consignment) | ✅ Done |
-| P3 | Sell Yours + seller self-service | ⬜ Not started |
+| P3 | Sell Yours + seller self-service | ✅ Done |
 | P4 | Buyer contact & scheduling (chat, test rides) | ⬜ Not started |
 | P5 | Certified commerce (checkout, aging-stock offers) | ⬜ Not started |
 | P6 | Service site (no login) | ⬜ Not started |
 | P7 | Polish, deploy, case study | ⬜ Not started |
 
-**Next up: P3.**
+**Next up: P4.**
 
 ---
 
@@ -69,6 +69,50 @@ starting the next one.
   breakdown, Publish/Send-to-seller/Save draft.
 - Demo sellers + submissions seeded (see "Demo data" below).
 
+### P3 — Sell Yours + seller self-service
+- **`/sell`** (Screens 5+6, public — comps/fork viewable logged out, submit
+  redirects to `/login?next=/sell&role=seller`): four fields + type, a small
+  hardcoded comp table (`src/lib/comps.ts`, keyed by brand/model, suppressed
+  entirely when no match), a single shared "asking price" input that feeds
+  both cards' live net-payout math (self = price − ₹99; certify =
+  price × 92%). Self card collects photos inline (own `submission-photos`
+  storage path); certify card is one click ("Book a free inspection"). Both
+  paths insert a `sell_submissions` row; self path also computes real
+  `automated_checks` (price-in-range from the comp table, repeat-seller from
+  the seller's actual submission count) so new listings land in P2's
+  moderation queue with genuine, not placeholder, checks.
+- **Seller portal** (`/seller/*`, guarded by `requireSeller`, redirects a
+  logged-out visitor to `/login?next=/seller&role=seller` and a non-seller
+  to `/`): My listings (live pipeline of pending/flagged/rejected
+  submissions + a card grid of owned bikes, Edit/Delete/+Sell a bike),
+  Test rides (self-listed bikes only — accept, or reject with a reason and
+  up to two alternative times), Notifications (mark-all-read).
+- **Edit → certification upsell**: saving an edit on a still-self-listed
+  bike offers "Upgrade to certified" (dismissable — "Keep it as-is" is a
+  real no-op); opting in shows real open `service_slots` capacity, books
+  exactly one via a narrow SECURITY DEFINER RPC
+  (`0010_book_inspection_slot_fn.sql`, since slot writes are admin-only
+  under RLS), creates a fresh `certify` submission so it feeds P2's
+  consignment queue exactly like a new Sell Yours submission, and flags the
+  original bike `pending_certification` without changing its listing type.
+- Login now supports a `role` query param (`?role=seller`) so sign-up from
+  `/sell` or `/seller` creates a seller account instead of always defaulting
+  to buyer.
+- Header/mobile nav gained the account menu this whole app was missing
+  until now: Sign in when logged out; My listings / Admin (role-appropriate)
+  + Sign out when logged in. There was previously no way to sign out at all.
+- Found and fixed while testing this phase (not new P3 code, but adjacent
+  bugs this phase's testing surfaced): a certified bike published via P2's
+  worksheet could end up with an empty `photos` array when its submission
+  never collected photos — `startWorksheet` now falls back to the same
+  placeholder image `approveSubmission` already used; and every mobile-nav
+  `SheetClose` rendered `as` a `Link` (pre-existing, all the way back to
+  P1) was missing `nativeButton={false}` — the fix pattern already
+  established for exactly this case in `site-header.tsx` — and was logging
+  a Base UI console warning. Note: `admin/inventory/page.tsx` and
+  `admin/consign/page.tsx` have the same latent warning on their `Button
+  render={<Link/>}` uses and were left alone as out of scope for this phase.
+
 ### Visual design (cross-cutting, done after P1 + P2)
 - Full redesign off the P0 placeholder look: teal brand palette + Parkinsans
   (headings) / DM Sans (body), sourced from user-provided Figma tokens.
@@ -88,8 +132,8 @@ starting the next one.
 
 ## Schema deviations from `data-model.md`
 
-The spec is the source of truth and wins on conflicts, but three gaps needed
-real column changes to build against. Each is documented inline in
+The spec is the source of truth and wins on conflicts, but a few gaps needed
+real column/function changes to build against. Each is documented inline in
 `data-model.md` too — this is just the index:
 
 | Change | Migration | Why |
@@ -97,6 +141,8 @@ real column changes to build against. Each is documented inline in
 | `bikes.range_km`, `motor_spec`, `serviced_note` added | `0006_bikes_spec_fields.sql` | P1's bike-detail spec grid needs them; original schema had no columns |
 | `bikes.frame_size` made nullable | `0007_bikes_frame_size_nullable.sql` | P2's moderation "Approve" creates a live bike in one click from a submission that never collects frame size |
 | `profiles.display_name` added | `0008_profiles_display_name.sql` | P2's moderation queue shows a seller name; profiles originally only had `id` + `role` |
+| `bikes.pending_certification` added | `0009_bikes_pending_certification.sql` | P3's edit-a-live-listing "request certification" flow needs somewhere to flag it on the seller's own listings page without changing `listing_type` |
+| `public.book_inspection_slot(date)` function added | `0010_book_inspection_slot_fn.sql` | `service_slots` writes are admin-only under RLS (0003), but a seller booking an inspection slot needs to atomically claim one — narrow `SECURITY DEFINER` function, same pattern as `is_admin()`, can only ever decrement by 1 and only when available |
 
 Also: `battery_percent` is a generated column on `bikes`
 (`0005_bikes_battery_percent.sql`) exposing `battery_health->>'percent'` for
@@ -115,10 +161,29 @@ filtering/sorting.
 - **9 demo `sell_submissions`** — `supabase/seed/03_demo_sell_submissions.sql`.
   Covers all four moderation contextual-action states plus two not-started
   certify submissions, plus enough history for a real auto-approve-rate stat.
+- **Workshop inspection slots** — `supabase/seed/04_demo_service_slots.sql`,
+  6 upcoming dates with varying capacity (including one fully booked), used
+  by P3's "request certification" slot picker.
+- **2 self-listed bikes owned by `rahul.demo@`** —
+  `supabase/seed/05_demo_seller_bikes.sql`, so the seller portal's "My
+  listings" has real owned inventory to show (P1's 13 demo bikes are all
+  owned by the admin account, seeded before P2/P3's seller accounts
+  existed).
+- **1 demo buyer** (`ananya.demo@example.com`) —
+  `supabase/seed/06_demo_buyer.sql`, real `auth.users` row (dev/demo-only,
+  same pattern as the demo sellers) so demo test-ride requests have a real
+  buyer.
+- **2 demo `test_rides`** — `supabase/seed/07_demo_test_rides.sql`, pending
+  requests on rahul's two self-listed bikes for P3's seller test-ride
+  calendar (the buyer-side booking flow itself is P4 scope, so these are
+  seeded directly rather than created through the app).
 
 **Admin login for testing:** `admin@revelo.in` / `RevAdminTest#2026` — I reset
 this password directly via SQL during P2 testing since I didn't have the
 original. Worth changing to something only you know.
+
+**Seller login for testing:** `rahul.demo@example.com` /
+`demo-not-a-real-password` (all four demo sellers share this password).
 
 ---
 
@@ -148,3 +213,17 @@ original. Worth changing to something only you know.
   moderation, consign) with demo sellers/submissions seeded, browser-tested
   end to end (approve → live bike, publish → live certified bike, both
   confirmed visible on the public marketplace). This file created.
+- **2026-09-07** — P3 built in full: `/sell` fork with a real hardcoded comp
+  table, self/certify submission with genuine automated checks; seller
+  portal (listings, test rides, notifications) under `requireSeller`;
+  edit → certification-upsell → real slot booking (new `book_inspection_slot`
+  RPC, since seller slot writes needed a narrow bypass of admin-only RLS);
+  login gained a `role` param; header/mobile nav gained the account menu
+  (sign in/out, role-appropriate portal link) the app had been missing since
+  P1. Browser-tested end to end across roles: self listing → real
+  moderation-queue entry with computed checks; certify upsell → real
+  consign-queue entry with comp-based estimate and a consumed slot; test-ride
+  accept/reject; notification mark-read; guard redirects for logged-out and
+  wrong-role visitors. Fixed two bugs found along the way: an empty-photos
+  bug in P2's `startWorksheet`, and missing `nativeButton={false}` on the
+  mobile nav's `Link`-rendered `SheetClose`s.

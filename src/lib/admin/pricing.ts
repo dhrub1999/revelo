@@ -1,12 +1,14 @@
+import { COMPS_WINDOW_DAYS, DEFAULT_COMPS_SAMPLE_SIZE } from "@/lib/comps";
+
 // Mirrors commercial-model.md exactly — do not alter the rate here without
 // updating that file too.
 export const COMMISSION_RATE = 0.08;
 export const STANDARD_INSPECTION_POINTS = 42;
-// No real comps engine exists yet (that's P3's "small hardcoded comp table").
-// Every worksheet seeds the same sample window; only the range itself varies
-// per submission's estimated_range_low/high.
-export const COMPS_SAMPLE_SIZE = 14;
-export const COMPS_WINDOW_DAYS = 90;
+// P3's comp table (src/lib/comps.ts) now backs the sell-yours quote; a
+// worksheet started from a submission that matched no comp table entry
+// falls back to this sample size, re-exported here for admin/actions.ts.
+export const COMPS_SAMPLE_SIZE = DEFAULT_COMPS_SAMPLE_SIZE;
+export { COMPS_WINDOW_DAYS };
 
 export interface CertifiedPayout {
   commissionAmount: number;
