@@ -436,6 +436,11 @@ export interface Database {
         Args: { p_offer_id: string };
         Returns: boolean;
       };
+      // 0013_service_booking_fn.sql — P6 service site, no-login slot claim.
+      book_next_service_slot: {
+        Args: Record<string, never>;
+        Returns: string | null;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
