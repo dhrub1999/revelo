@@ -88,7 +88,7 @@ export default async function ModerationPage() {
                         label={checks?.price_in_range === false ? "price out of range" : "price in range"}
                       />
                       {checks?.repeat_seller && (
-                        <li className="text-ink">{totalListings}rd listing this month</li>
+                        <li className="text-ink">{ordinal(totalListings)} listing this month</li>
                       )}
                     </ul>
                   </td>
@@ -131,6 +131,12 @@ function Chip({ label, tone = "default" }: { label: string; tone?: "default" | "
       {label}
     </span>
   );
+}
+
+function ordinal(n: number): string {
+  const rules = new Intl.PluralRules("en", { type: "ordinal" });
+  const suffixes: Record<string, string> = { one: "st", two: "nd", few: "rd", other: "th" };
+  return `${n}${suffixes[rules.select(n)]}`;
 }
 
 function CheckLine({ ok, label }: { ok: boolean; label: string }) {
