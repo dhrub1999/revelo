@@ -4,6 +4,7 @@ import { ShieldCheck } from "@phosphor-icons/react/dist/ssr/ShieldCheck";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/supabase/auth";
 import { getBikeById } from "@/lib/bikes/query";
+import { getMyOfferForBike } from "@/lib/buyer/queries";
 import { formatKm, formatPrice, formatShortDate, daysSince } from "@/lib/format";
 import { BatteryBadge } from "@/components/badges/battery-badge";
 import { TierBadge } from "@/components/badges/tier-badge";
@@ -24,10 +25,17 @@ export default async function BikeDetailPage(props: PageProps<"/bikes/[id]">) {
   if (!bike) notFound();
 
   const battery = bike.battery_health;
+  const available = bike.status === "live";
   const offerEligible =
     bike.listing_type === "certified" &&
+    available &&
     !!bike.certified_live_since &&
     daysSince(bike.certified_live_since) >= OFFER_ELIGIBLE_AFTER_DAYS;
+
+  const myOffer =
+    bike.listing_type === "certified" && currentUser
+      ? await getMyOfferForBike(supabase, bike.id, currentUser.id)
+      : null;
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 pt-6 sm:px-6 sm:pb-10">
@@ -105,8 +113,15 @@ export default async function BikeDetailPage(props: PageProps<"/bikes/[id]">) {
             <Actions
               bikeId={bike.id}
               listingType={bike.listing_type}
+              bikeStatus={bike.status}
+              available={available}
               offerEligible={offerEligible}
               hasUser={!!currentUser}
+              activeOffer={
+                myOffer && (myOffer.status === "pending" || myOffer.status === "countered")
+                  ? myOffer
+                  : null
+              }
             />
           </div>
         </div>

@@ -19,12 +19,12 @@ starting the next one.
 | P1 | Buyer core (marketplace grid, bike detail, login) | ✅ Done |
 | P2 | Admin core (inventory, moderation, consignment) | ✅ Done |
 | P3 | Sell Yours + seller self-service | ✅ Done |
-| P4 | Buyer contact & scheduling (chat, test rides) | ⬜ Not started |
-| P5 | Certified commerce (checkout, aging-stock offers) | ⬜ Not started |
+| P4 | Buyer contact & scheduling (chat, test rides) | ✅ Done |
+| P5 | Certified commerce (checkout, aging-stock offers) | ✅ Done |
 | P6 | Service site (no login) | ⬜ Not started |
 | P7 | Polish, deploy, case study | ⬜ Not started |
 
-**Next up: P4.**
+**Next up: P6.**
 
 ---
 
@@ -113,6 +113,82 @@ starting the next one.
   `admin/consign/page.tsx` have the same latent warning on their `Button
   render={<Link/>}` uses and were left alone as out of scope for this phase.
 
+### P4 — Buyer contact & scheduling
+- **Messaging** (self-listed only — certified bikes never show it, per the
+  core "no external contact, ever" project rule): `Message seller` on the
+  bike-detail page finds-or-creates a `conversations` row (unique on
+  `bike_id, buyer_id`) and redirects to `/messages/[id]`. New `(buyer)` route
+  group (`/messages`, `/messages/[id]`, `/test-rides`), gated by a plain
+  `requireLoggedIn` (any role, unlike `requireSeller`/`requireAdmin` — a
+  seller or admin account can act as a buyer too). Sending a message
+  notifies the seller (`notifications`, type `new_message`); since there's
+  no live second user session for the seller side, the client schedules a
+  canned reply (`seedSellerReply`, random pick from a small pool) ~1.8s
+  later with a "Seller is typing…" indicator in between. New RLS insert
+  policy (`0011_messages_seller_mock_insert.sql`) was needed — the existing
+  policy only allowed `sender_role='buyer'` inserts.
+- **Test-ride booking**, both listing types, from the same `Book a test
+  ride` dialog (client-generated 5-day × 2-time-slot picker — no DB slots
+  table for this, unlike inspection booking): self-listed inserts
+  `status='pending'` and notifies the seller (type `test_ride_requested`),
+  wired straight into P3's already-built seller accept/reject queue;
+  certified inserts `status='accepted'` immediately and notifies no one —
+  no seller mediation needed, Revélo already holds the bike. Buyer-side
+  status (including a seller's rejection reason/alternative dates) is
+  read on `/test-rides`, not pushed — the `notifications` table only
+  supports `seller`/`admin` recipients, so "buyer is notified either way"
+  is the buyer checking their own page, not a push notification.
+- Header/mobile nav gained `Messages` / `Test rides` links for any logged-in
+  user.
+
+### P5 — Certified commerce (checkout + aging-stock offers)
+Both features are certified-only per spec — self-listed bikes never get a checkout or an
+offer action, they stay on P4's plain chat.
+- **Checkout** (`/checkout/[bikeId]`, gated by login): a 3-step wizard client component
+  (`checkout-wizard.tsx`) — fulfillment (home delivery, mocked next-Thursday slot, ₹250 /
+  free pickup), warranty (included default / extend-6mo / annual-care upsells, never
+  hidden), then an itemised summary (bike + 1.5% buyer protection + delivery + any
+  warranty upgrade) with a flat ₹2,000 "payable now," a balance-or-EMI toggle (18-month
+  flat estimate, explicitly labelled "not a real loan"), and `Pay ₹2,000 & reserve`. No
+  real payment gateway. On success the bike flips to `reserved` (stays visible, dimmed
+  elsewhere) and the buyer lands on a dedicated `/checkout/[bikeId]/confirmed/[id]` page
+  that reads the reservation back from the DB — needed because Next.js Server Actions
+  implicitly refresh the invoking page's Server Components on completion, which would
+  otherwise re-run the checkout page's own `status === 'live'` gate and clobber a
+  client-held "confirmed" state with the "no longer available" fallback. `unstable_rethrow`
+  in the wizard's catch block lets that redirect pass through client-side error handling
+  meant for genuine validation failures (e.g. a race where someone else reserved it first).
+- **Aging-stock offers**: `Make an offer` appears on a certified bike's detail page once
+  `certified_live_since` is 60+ days old (existing P1 gate, now wired to a real dialog
+  instead of a placeholder) — a buyer submits a price, which notifies both admin and the
+  seller (`offers` row, status `pending`). New **admin Offers queue** (`/admin/offers`):
+  Accept / Counter (own price) / Reject, never routed through the seller. New buyer-facing
+  **`/offers`** (added to the account nav alongside Messages/Test rides): shows status and,
+  once countered, lets the buyer Accept or Decline — mirroring P4's "buyer checks their own
+  page, not a push notification" pattern, since `notifications` still only supports
+  `seller`/`admin` recipients.
+  - Accepting an offer (either admin accepting the original ask, or a buyer accepting
+    Revélo's counter) creates the `reservations` row **directly** — pickup/included-warranty
+    defaults, since there's no live wizard session at accept-time — per the spec's literal
+    "an accepted offer creates a reservations row." This is a deliberately different, simpler
+    path from the checkout wizard above; the two never merge.
+  - Three new narrow `SECURITY DEFINER` RPCs (`0012_checkout_offer_fns.sql`, same pattern as
+    `is_admin()`/`book_inspection_slot()`): `reserve_certified_bike` (atomic `status='live'`
+    guard so two buyers can't reserve the same bike), `accept_offer` (admin-or-countered-buyer
+    only, checked inside the function), `decline_offer` (buyer, countered→rejected only) —
+    needed because a buyer is never `bikes.seller_id` nor admin under RLS (0003).
+- Bike-detail `Actions` now reflects real availability instead of always showing Reserve/Offer:
+  a non-`live` certified or self-listed bike shows a plain "reserved"/"sold" status line and
+  no actions at all.
+- Browser-tested end to end on the live Supabase project (not just locally-typed): full 3-step
+  checkout on the wireframe's own example bike (EMotorad T-Rex+, numbers matched the reference
+  screenshot exactly — ₹34,500 bike + ₹518 protection + ₹250 delivery, ₹2,000 payable, ₹33,268
+  balance / ₹1,848-per-month EMI); offer submit → admin counter → buyer accepts counter →
+  reservation auto-created at the negotiated price with all three seller notifications
+  (submitted/countered/accepted) present; offer submit → admin direct accept → reservation
+  auto-created immediately, queue clears. Confirmed the DB math (protection fee, total,
+  defaults) on both offer-accept paths via direct SQL.
+
 ### Visual design (cross-cutting, done after P1 + P2)
 - Full redesign off the P0 placeholder look: teal brand palette + Parkinsans
   (headings) / DM Sans (body), sourced from user-provided Figma tokens.
@@ -143,6 +219,8 @@ real column/function changes to build against. Each is documented inline in
 | `profiles.display_name` added | `0008_profiles_display_name.sql` | P2's moderation queue shows a seller name; profiles originally only had `id` + `role` |
 | `bikes.pending_certification` added | `0009_bikes_pending_certification.sql` | P3's edit-a-live-listing "request certification" flow needs somewhere to flag it on the seller's own listings page without changing `listing_type` |
 | `public.book_inspection_slot(date)` function added | `0010_book_inspection_slot_fn.sql` | `service_slots` writes are admin-only under RLS (0003), but a seller booking an inspection slot needs to atomically claim one — narrow `SECURITY DEFINER` function, same pattern as `is_admin()`, can only ever decrement by 1 and only when available |
+| `messages` gained an insert policy for `sender_role='seller_mock'` | `0011_messages_seller_mock_insert.sql` | 0003's original policy only allowed a buyer to insert their own `sender_role='buyer'` messages; P4's canned-seller-reply mechanic is triggered by the buyer's own client (no live seller session), scoped to the buyer's own conversation |
+| Three `SECURITY DEFINER` functions: `reserve_certified_bike`, `accept_offer`, `decline_offer` | `0012_checkout_offer_fns.sql` | P5's checkout and offer-accept flows need to write `bikes.status`/`reservations` as a buyer, who is neither `seller_id` nor admin under 0003's RLS — same narrow-function pattern as `is_admin()`/`book_inspection_slot()`, no policy widened |
 
 Also: `battery_percent` is a generated column on `bikes`
 (`0005_bikes_battery_percent.sql`) exposing `battery_health->>'percent'` for
@@ -176,7 +254,15 @@ filtering/sorting.
 - **2 demo `test_rides`** — `supabase/seed/07_demo_test_rides.sql`, pending
   requests on rahul's two self-listed bikes for P3's seller test-ride
   calendar (the buyer-side booking flow itself is P4 scope, so these are
-  seeded directly rather than created through the app).
+  seeded directly rather than created through the app). One of these two
+  was accepted and the other rejected (with a reason) during P4 browser
+  testing, via the real seller accept/reject UI — so the live DB no longer
+  matches the seed file's "both pending" state; that's expected, not drift
+  to fix.
+- **1 demo conversation** — `supabase/seed/08_demo_messages.sql`, a buyer
+  (`ananya.demo@`) + seller (`rahul.demo@`) exchange on the Motovolt Urban+,
+  so `/messages` isn't empty on first load. Plus a matching seller
+  notification.
 
 **Admin login for testing:** `admin@revelo.in` / `RevAdminTest#2026` — I reset
 this password directly via SQL during P2 testing since I didn't have the
@@ -185,13 +271,20 @@ original. Worth changing to something only you know.
 **Seller login for testing:** `rahul.demo@example.com` /
 `demo-not-a-real-password` (all four demo sellers share this password).
 
+**Buyer login for testing:** `ananya.demo@example.com` /
+`demo-not-a-real-password`.
+
 ---
 
 ## Open items / known gaps
 
-- Two pre-existing Supabase security advisories (benign, unchanged since P0):
-  `handle_new_user`/`is_admin` are `SECURITY DEFINER` and technically callable
-  via RPC by anon/authenticated roles — expected for a trigger + RLS helper.
+- Supabase security advisories flagging `SECURITY DEFINER` functions as
+  anon/authenticated RPC-callable (benign, same category since P0):
+  `handle_new_user`, `is_admin`, `book_inspection_slot`, and now P5's
+  `reserve_certified_bike`/`accept_offer`/`decline_offer`. Each checks its own
+  authorization internally (`auth.uid()`, `is_admin()`, or an explicit
+  buyer/countered-status check) rather than relying on the RPC-level grant, so
+  an anon call fails on the internal check, not on a missing grant.
 - `auth_leaked_password_protection` disabled (Supabase Auth project setting,
   not app code) — optional, low-priority, enable in the Supabase dashboard if
   desired.
@@ -227,3 +320,38 @@ original. Worth changing to something only you know.
   wrong-role visitors. Fixed two bugs found along the way: an empty-photos
   bug in P2's `startWorksheet`, and missing `nativeButton={false}` on the
   mobile nav's `Link`-rendered `SheetClose`s.
+- **2026-09-07** — P4 built in full: buyer messaging on self-listed bikes
+  (find-or-create conversation, canned seller auto-reply with a typing
+  indicator, seller notification) and test-ride booking on both listing
+  types (self → pending + seller notification, wired into P3's existing
+  accept/reject queue; certified → instant confirmation, no one notified)
+  from a shared client-side slot-picker dialog on the bike-detail page. New
+  `(buyer)` route group (`/messages`, `/messages/[id]`, `/test-rides`)
+  gated by a role-agnostic `requireLoggedIn`. One new RLS policy
+  (`0011_messages_seller_mock_insert.sql`) for the mocked seller-reply
+  insert. Browser-tested end to end across both accounts: buyer sends a
+  message → seller sees it + gets notified → canned reply arrives; buyer
+  books a test ride on a self-listed bike → "Request sent" → seller's
+  existing test-rides queue shows it pending → seller accepts/rejects →
+  buyer's `/test-rides` reflects the new status; buyer books a certified
+  bike's test ride → instant "Test ride confirmed", no messaging option
+  ever shown for certified bikes.
+- **2026-09-07** — P5 built in full: certified-only 3-step checkout wizard
+  (`/checkout/[bikeId]`) plus aging-stock offers (buyer dialog on bike detail,
+  admin `/admin/offers` queue, buyer-facing `/offers`). Three new
+  `SECURITY DEFINER` RPCs (`0012_checkout_offer_fns.sql`) for the writes a
+  buyer can't otherwise make under RLS. Found and fixed a real bug during
+  testing, not anticipated in the plan: Next.js Server Actions implicitly
+  refresh the calling page's Server Components on completion, which
+  clobbered the wizard's client-held "reservation confirmed" state the
+  instant the bike stopped being `status='live'` — fixed by redirecting to a
+  dedicated `/checkout/[bikeId]/confirmed/[reservationId]` route that reads
+  the reservation back from the DB, with `unstable_rethrow` in the wizard so
+  that redirect isn't swallowed by the client's own validation-error catch
+  block. Browser-tested end to end on the live project: full checkout on the
+  wireframe's own example bike with numbers matching the reference
+  screenshot exactly; offer → admin counter → buyer accepts counter →
+  reservation auto-created at the negotiated price with all three seller
+  notifications present; offer → admin direct accept → reservation
+  auto-created immediately. Confirmed reservation math via direct SQL on
+  both offer-accept paths.

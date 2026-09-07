@@ -414,6 +414,28 @@ export interface Database {
         Args: { p_date: string };
         Returns: boolean;
       };
+      // 0012_checkout_offer_fns.sql — P5 checkout + aging-stock offers.
+      reserve_certified_bike: {
+        Args: {
+          p_bike_id: string;
+          p_fulfillment: string;
+          p_warranty_tier: string;
+          p_buyer_protection_fee: number;
+          p_delivery_fee: number;
+          p_total: number;
+          p_reservation_amount: number;
+          p_emi_opted: boolean;
+        };
+        Returns: string | null;
+      };
+      accept_offer: {
+        Args: { p_offer_id: string };
+        Returns: string | null;
+      };
+      decline_offer: {
+        Args: { p_offer_id: string };
+        Returns: boolean;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

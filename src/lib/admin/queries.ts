@@ -6,6 +6,7 @@ type Client = SupabaseClient<Database>;
 export type BikeRow = Database["public"]["Tables"]["bikes"]["Row"];
 export type SubmissionRow = Database["public"]["Tables"]["sell_submissions"]["Row"];
 export type CertificationRow = Database["public"]["Tables"]["certifications"]["Row"];
+export type OfferRow = Database["public"]["Tables"]["offers"]["Row"];
 
 const DRAFT_STATUSES: BikeRow["status"][] = ["in_workshop", "photographed"];
 const SOLD_STATUSES: BikeRow["status"][] = ["sold", "delivered", "paid_out"];
@@ -195,6 +196,37 @@ export async function getDisplayNames(
   if (error) throw error;
 
   return new Map((data ?? []).map((p) => [p.id, p.display_name ?? "Seller"]));
+}
+
+export interface OfferQueueRow {
+  offer: OfferRow;
+  bike: BikeRow;
+}
+
+/** pending/countered only — accepted/rejected offers are resolved, no
+ *  further admin action needed on them. */
+export async function listOffersQueue(supabase: Client): Promise<OfferQueueRow[]> {
+  const { data: offers, error } = await supabase
+    .from("offers")
+    .select("*")
+    .in("status", ["pending", "countered"])
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  if (!offers || offers.length === 0) return [];
+
+  const bikeIds = Array.from(new Set(offers.map((o) => o.bike_id)));
+  const { data: bikes, error: bikesError } = await supabase
+    .from("bikes")
+    .select("*")
+    .in("id", bikeIds);
+  if (bikesError) throw bikesError;
+  const bikesById = new Map((bikes ?? []).map((b) => [b.id, b]));
+
+  return offers.flatMap((offer) => {
+    const bike = bikesById.get(offer.bike_id);
+    if (!bike) return [];
+    return [{ offer, bike }];
+  });
 }
 
 export async function getCertificationByBikeId(
