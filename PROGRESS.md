@@ -21,10 +21,11 @@ starting the next one.
 | P3 | Sell Yours + seller self-service | ✅ Done |
 | P4 | Buyer contact & scheduling (chat, test rides) | ✅ Done |
 | P5 | Certified commerce (checkout, aging-stock offers) | ✅ Done |
-| P6 | Service site (no login) | ⬜ Not started |
-| P7 | Polish, deploy, case study | ⬜ Not started |
+| P6 | Service site (no login) | ✅ Done |
+| P7 | Polish, deploy, case study | 🟡 In progress |
 
-**Next up: P6.**
+**Next up: finish P7** — mobile pass done, case study published; deploy is waiting on the
+Vercel dashboard connection (your call, see "What's built" below).
 
 ---
 
@@ -189,6 +190,81 @@ offer action, they stay on P4's plain chat.
   auto-created immediately, queue clears. Confirmed the DB math (protection fee, total,
   defaults) on both offer-accept paths via direct SQL.
 
+### P6 — Service site (no login)
+Both screens are public — no `getCurrentUser`/`requireLoggedIn` gate anywhere in this phase,
+per spec ("no login anywhere in this phase — unrelated to the buyer/seller contact
+restriction"). Runs as the Postgres `anon` role throughout.
+- **Service homepage** (`/service`): hero ("We fix e-bikes, and we sell the good ones on.")
+  with a live `Browse N used bikes →` count (reuses P1's `getMarketplaceTotalCount`) and
+  `Book a repair` → `/service/book`; full eight-row price list from `commercial-model.md`
+  (two columns desktop, truncated-3-rows-then-`+5 more` via a native `<details>` on mobile,
+  no JS needed for the expand); bottom band of come-by-the-shop placeholder info, a static
+  map placeholder, and a short request form (bike, issue, phone → `Request a slot`).
+  Mobile gets its own `HeaderSearch` above the hero, matching the header's search that's
+  hidden below `md:`.
+- **Service booking** (`/service/book`, Screen 8): four quick-category cards (tune-up,
+  battery care, motor & drive, pre-buy inspection ₹999 flat) that prefill the fuller
+  booking form's issue select; form collects brand+model, issue, workshop-or-pickup, phone;
+  a "next available" panel showing real `service_slots` capacity beside it (optimistically
+  decremented client-side after a successful booking, no full page reload needed); bottom
+  band annual-care-plan upsell card with a mocked `Join` confirmation dialog (no real
+  payment, no `annual_plan` table in the spec — this is a demo confirmation only, same
+  category as checkout's mock pay step).
+- Both forms write to `service_bookings` through one shared server action
+  (`requestServiceBooking`), which claims the real next-available date from `service_slots`
+  atomically via a new RPC rather than trusting a client-picked date — see below.
+- "Workshop or pickup" reuses the checkout `Fulfillment` enum (`'delivery' | 'pickup'`) with
+  matching cost semantics rather than matching English words: `'pickup'` is the free option
+  here too (customer drops the bike at the workshop themselves, same as checkout's free
+  workshop pickup), `'delivery'` is the paid one (Revélo collects it, ₹250/way, same as
+  checkout's paid home delivery) — documented inline since the UI labels ("Workshop" /
+  "Pickup — we collect") don't literally match the stored enum values.
+- New `book_next_service_slot()` `SECURITY DEFINER` RPC (`0013_service_booking_fn.sql`) —
+  same narrow-bypass pattern as `book_inspection_slot()` (P3), but granted to `anon` too
+  since a P6 visitor is never signed in; picks the earliest future date with capacity left
+  and atomically decrements it (`for update skip locked` against concurrent bookings) rather
+  than trusting a client-supplied date, so the panel shown and the slot actually consumed
+  can never drift apart. If every seeded slot is exhausted, the booking still goes through
+  (mock system — the workshop calls to schedule either way; nothing is actually oversold).
+- Browser-tested end to end on the live project: homepage request form → real booking row +
+  slot decremented from 4→3 (confirmed via direct SQL); booking-page category-card prefill →
+  select-value rendering (fixed a bug where the fulfillment `<SelectValue>` initially showed
+  the raw `"pickup"` string instead of its label — needed the same value→label render-prop
+  pattern already used in `admin/bike-form.tsx`) → booking sent, panel decremented 3→2 in the
+  UI; annual-care `Join` → confirm → "You're in" mock state; mobile layout (375px) confirmed
+  correct order (search, hero, workshop photo, truncated price list, `+5 more` expand).
+
+### P7 — Polish, deploy, case study (in progress)
+- **Mobile pass**: delegated to a subagent for the full P1–P6 sweep (nav pattern, card
+  restacking, touch targets, sticky bars, image weight) plus desktop+mobile screenshots of
+  every key screen for case-study material — 38 screenshots saved. Verdict: clean, no
+  regressions, nothing needed fixing. Confirms each phase's own mobile spec (Sheet drawers
+  for nav/filters, single-column restacking, the bike-detail sticky action bar, native
+  `<details>` progressive disclosure on the service price list) held up under a dedicated
+  sweep, not just at build time. Admin (P2) intentionally left mobile-untested — desktop-only
+  by design per the phase spec.
+- **Case study**: published as an artifact — [Building Revélo](https://claude.ai/code/artifact/87f24c13-4f61-47a2-a439-710cda09d954).
+  Reuses Revélo's own design tokens (teal/Parkinsans/DM Sans) plus JetBrains Mono for data
+  callouts, built around 13 real screenshots from the mobile-pass sweep (embedded as base64
+  data URIs so the page is self-contained). Covers the rationale for the two-tier
+  self-listed/certified structure, prominent-vs-secondary decisions on the bike-detail page,
+  the real-computed-numbers discipline (nothing hardcoded — commission, payout, EMI, slot
+  capacity), the no-external-contact business rule and why, the service site's link back to
+  the same workshop capacity, the mobile-pass results, and — named explicitly, as P7 asks —
+  the scope decision to build the full consignment/certification business rather than a
+  simple curated-inventory site, and its honest cost (time that could have gone entirely into
+  polishing P1's browse/detail hierarchy instead).
+- **Deploy**: not yet live. Decided with you to skip the Vercel CLI (no account of mine to
+  OAuth with) in favor of you connecting `github.com/dhrub1999/revelo` directly in the Vercel
+  dashboard — instructions given in-conversation (env vars: `NEXT_PUBLIC_SUPABASE_URL`,
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY`; `SUPABASE_SERVICE_ROLE_KEY` isn't actually used by the app
+  code, so it doesn't need to go to Vercel). `main` currently has P0–P5 merged; P6 (service
+  site) is still uncommitted on `feat/service-site` per your call earlier this session, so it
+  won't be live until you commit/merge it. Once you share the deployed URL, the plan is to
+  browser-test the live path end to end (Sell Yours → moderation → live listing →
+  message/test-ride/reserve/offer, service booking writing a real row) and fold the link into
+  the case study.
+
 ### Visual design (cross-cutting, done after P1 + P2)
 - Full redesign off the P0 placeholder look: teal brand palette + Parkinsans
   (headings) / DM Sans (body), sourced from user-provided Figma tokens.
@@ -221,6 +297,7 @@ real column/function changes to build against. Each is documented inline in
 | `public.book_inspection_slot(date)` function added | `0010_book_inspection_slot_fn.sql` | `service_slots` writes are admin-only under RLS (0003), but a seller booking an inspection slot needs to atomically claim one — narrow `SECURITY DEFINER` function, same pattern as `is_admin()`, can only ever decrement by 1 and only when available |
 | `messages` gained an insert policy for `sender_role='seller_mock'` | `0011_messages_seller_mock_insert.sql` | 0003's original policy only allowed a buyer to insert their own `sender_role='buyer'` messages; P4's canned-seller-reply mechanic is triggered by the buyer's own client (no live seller session), scoped to the buyer's own conversation |
 | Three `SECURITY DEFINER` functions: `reserve_certified_bike`, `accept_offer`, `decline_offer` | `0012_checkout_offer_fns.sql` | P5's checkout and offer-accept flows need to write `bikes.status`/`reservations` as a buyer, who is neither `seller_id` nor admin under 0003's RLS — same narrow-function pattern as `is_admin()`/`book_inspection_slot()`, no policy widened |
+| `public.book_next_service_slot()` function added | `0013_service_booking_fn.sql` | P6's public booking form runs as `anon` (no login in this phase) but `service_slots` writes are admin-only under RLS — same narrow-function pattern as `book_inspection_slot()`, granted to `anon` as well as `authenticated` since P3's version wasn't |
 
 Also: `battery_percent` is a generated column on `bikes`
 (`0005_bikes_battery_percent.sql`) exposing `battery_health->>'percent'` for
@@ -280,8 +357,10 @@ original. Worth changing to something only you know.
 
 - Supabase security advisories flagging `SECURITY DEFINER` functions as
   anon/authenticated RPC-callable (benign, same category since P0):
-  `handle_new_user`, `is_admin`, `book_inspection_slot`, and now P5's
-  `reserve_certified_bike`/`accept_offer`/`decline_offer`. Each checks its own
+  `handle_new_user`, `is_admin`, `book_inspection_slot`, P5's
+  `reserve_certified_bike`/`accept_offer`/`decline_offer`, and now P6's
+  `book_next_service_slot` (this one *should* be anon-callable — no login in this phase).
+  Each checks its own
   authorization internally (`auth.uid()`, `is_admin()`, or an explicit
   buyer/countered-status check) rather than relying on the RPC-level grant, so
   an anon call fails on the internal check, not on a missing grant.
@@ -355,3 +434,15 @@ original. Worth changing to something only you know.
   notifications present; offer → admin direct accept → reservation
   auto-created immediately. Confirmed reservation math via direct SQL on
   both offer-accept paths.
+- **2026-09-07** — P6 built in full: public service homepage (`/service`) and booking page
+  (`/service/book`), no login anywhere in this phase. New `book_next_service_slot()`
+  `SECURITY DEFINER` RPC (`0013_service_booking_fn.sql`) granted to `anon`, since P3's
+  equivalent (`book_inspection_slot`) was authenticated-only and P6 visitors never sign in.
+  Browser-tested end to end on the live project: homepage request form → real DB row +
+  real slot decrement (verified via SQL); booking page → category-card prefill, both
+  selects, full submit → "next available" panel correctly reflected the shared slot pool's
+  new count. Fixed one bug found in testing: the fulfillment `<SelectValue>` was rendering
+  the raw enum string instead of its label until given the same value→label render-prop
+  already used in `admin/bike-form.tsx`. Mobile order (search → hero → workshop photo →
+  truncated price list) verified at 375px after fixing an initial ordering mistake (photo
+  was appearing before the hero heading).
