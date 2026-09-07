@@ -10,6 +10,9 @@ FK to `auth.users`.
 - `id`
 - `role`: `'buyer' | 'seller' | 'admin'` — a person holds exactly one role in this build.
   One hardcoded admin account; no public admin signup.
+- `display_name` — nullable, added post-P0 (see
+  `supabase/migrations/0008_profiles_display_name.sql`): P2's moderation queue
+  shows a seller name per row, which this table originally had no column for.
 
 ## sell_submissions
 The entry point for every bike, self-listed or certified.
@@ -28,7 +31,17 @@ see P2/P3).
 - `id`
 - `seller_id` — FK profiles
 - `source_submission_id` — nullable FK sell_submissions
-- `brand`, `model`, `year`, `km`, `type`, `frame_size`, `rider_height_range`, `price`
+- `brand`, `model`, `year`, `km`, `type`, `frame_size` (nullable — see note below),
+  `rider_height_range`, `price`
+- `range_km`, `motor_spec`, `serviced_note` — nullable. Added post-P0 (see
+  `supabase/migrations/0006_bikes_spec_fields.sql`): the P1 bike-detail spec
+  grid requires Range/Motor/Serviced rows that this file originally had no
+  columns for. Admin-editable in P2.
+- `frame_size` made nullable post-P0 (see
+  `supabase/migrations/0007_bikes_frame_size_nullable.sql`): P2's moderation
+  "Approve" creates a live bike in one click straight from a sell_submissions
+  row, which never collects frame size (P3's Sell Yours fork doesn't ask for
+  it). Admin fills it in afterwards via Edit.
 - `listing_type`: `'self' | 'certified'`
 - `photos[]` — ordered, cover first
 - `condition_notes[]` — `{ text, photo_ref (nullable) }`

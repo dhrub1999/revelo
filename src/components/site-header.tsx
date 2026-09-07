@@ -1,39 +1,52 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { HeaderSearch } from "@/components/header-search";
+import { MobileNav } from "@/components/mobile-nav";
+import { Logomark } from "@/components/logomark";
+import { Button } from "@/components/ui/button";
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-line bg-surface">
-      <div className="mx-auto flex max-w-7xl items-center gap-6 px-4 py-4 sm:px-6">
-        <Link href="/" className="text-xl font-semibold tracking-tight">
-          Revélo
+    <header className="sticky top-0 z-30 border-b border-line bg-surface/90 backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-1.5 font-heading text-lg font-semibold tracking-tight text-ink"
+        >
+          <Logomark className="size-6 text-brand" />
+          <span>
+            Rev<span className="text-brand">é</span>lo
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-5 text-sm text-muted md:flex">
-          <Link href="/" className="hover:text-ink">
+          <Link href="/" className="transition-colors hover:text-ink">
             Bikes
           </Link>
-          <Link href="/service" className="hover:text-ink">
+          <Link href="/service" className="transition-colors hover:text-ink">
             Service
           </Link>
-          <Link href="/about" className="hover:text-ink">
+          <Link href="/about" className="transition-colors hover:text-ink">
             About
           </Link>
         </nav>
 
         <div className="ml-auto hidden flex-1 max-w-md md:block">
-          <input
-            type="search"
-            placeholder='Search brand, model or "cargo"'
-            className="w-full rounded-control border border-line bg-paper px-3 py-2 text-sm outline-none placeholder:text-muted focus:border-ink"
-          />
+          <Suspense fallback={<div className="h-9" />}>
+            <HeaderSearch />
+          </Suspense>
         </div>
 
-        <Link
-          href="/sell"
-          className="ml-auto shrink-0 rounded-control border border-ink px-4 py-2 text-sm font-medium md:ml-0"
+        <Button
+          render={<Link href="/sell" />}
+          nativeButton={false}
+          size="lg"
+          className="ml-auto h-9 shrink-0 rounded-control bg-brand-fill text-white hover:bg-brand-fill-hover md:ml-0"
         >
           Sell your bike
-        </Link>
+        </Button>
+
+        <MobileNav />
       </div>
     </header>
   );

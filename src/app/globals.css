@@ -1,31 +1,77 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Warm, editorial neutrals — not the wireframe's beige/black */
-  --color-paper: #faf8f4;
+  /* Neutrals — cool, slightly desaturated (pairs with electric teal without
+     competing warmth). Off-white/off-black, never pure. */
+  --color-paper: #f8fafa;
   --color-surface: #ffffff;
-  --color-ink: #17181c;
-  --color-muted: #6b6a66;
-  --color-line: #e6e3da;
+  --color-ink: #1f2020;
+  --color-muted: #5a5e5e;
+  --color-line: #dfe6e6;
+  --color-line-subtle: #f0f4f4;
 
-  /* Battery health is the primary trust signal on every card — it needs to
-     read as confident and unambiguous. */
-  --color-battery: #1a7a4c;
-  --color-battery-bg: #eaf5ee;
+  /* Brand — electric teal. This is the ONE accent: links, primary actions,
+     focus rings, certified badge, active/selected states. Locked shade per
+     surface (fill vs on-white text) so contrast stays predictable everywhere
+     rather than picked per-component. */
+  --color-brand: #0b6f68;
+  --color-brand-hover: #075954;
+  --color-brand-fill: #0b6f68;
+  --color-brand-fill-hover: #075954;
+  --color-brand-tint: #e2fffb;
+  --color-brand-tint-fg: #0b6f68;
+  --color-brand-ring: #1fd4c6;
 
-  /* Certified vs self-listed must be visually distinct and unmissable.
-     Certified reads as a filled "stamp"; self-listed as an outline. */
-  --color-certified: #17181c;
-  --color-certified-fg: #faf8f4;
-  --color-self: #17181c;
+  /* Certified vs self-listed is the core trust distinction on every card:
+     certified is Revélo's own program, so it borrows the brand fill; self
+     stays neutral outline (seller-listed, not brand-verified). */
+  --color-certified: #0b6f68;
+  --color-certified-fg: #ffffff;
+  --color-self: #454848;
 
-  --color-flag-bg: #fdf3e7;
-  --color-flag-fg: #92400e;
-  --color-danger: #b3261e;
+  /* Battery health is a physical health signal, kept semantically separate
+     from the brand accent so "click me" (teal) and "this is healthy" (green)
+     never compete for the same meaning. */
+  --color-battery: #347a40;
+  --color-battery-bg: #eefdf0;
 
-  --radius-card: 14px;
+  --color-flag-bg: #fbf898;
+  --color-flag-fg: #5f4d23;
+  --color-danger: #b6390b;
+  --color-danger-bg: #fff7f4;
+
+  --radius-card: 16px;
   --radius-control: 10px;
   --radius-pill: 999px;
+
+  /* shadcn/ui's semantic tokens alias straight onto our brand tokens above,
+     instead of shipping shadcn's own default zinc/oklch palette. Because
+     CSS custom properties resolve live, these automatically follow the
+     dark-mode redefinitions below without needing a second copy. */
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-brand-fill);
+  --primary-foreground: #ffffff;
+  --secondary: var(--color-surface);
+  --secondary-foreground: var(--color-ink);
+  --muted: var(--color-line-subtle);
+  --muted-foreground: var(--color-muted);
+  --accent: var(--color-brand-tint);
+  --accent-foreground: var(--color-brand-tint-fg);
+  --destructive: var(--color-danger);
+  --destructive-foreground: #ffffff;
+  --border: var(--color-line);
+  --input: var(--color-line);
+  --ring: var(--color-brand-ring);
+  --radius: 0.625rem;
 }
 
 @theme inline {
@@ -34,41 +80,160 @@
   --color-ink: var(--color-ink);
   --color-muted: var(--color-muted);
   --color-line: var(--color-line);
-  --color-battery: var(--color-battery);
-  --color-battery-bg: var(--color-battery-bg);
+  --color-line-subtle: var(--color-line-subtle);
+
+  --color-brand: var(--color-brand);
+  --color-brand-hover: var(--color-brand-hover);
+  --color-brand-fill: var(--color-brand-fill);
+  --color-brand-fill-hover: var(--color-brand-fill-hover);
+  --color-brand-tint: var(--color-brand-tint);
+  --color-brand-tint-fg: var(--color-brand-tint-fg);
+  --color-brand-ring: var(--color-brand-ring);
+
   --color-certified: var(--color-certified);
   --color-certified-fg: var(--color-certified-fg);
   --color-self: var(--color-self);
+
+  --color-battery: var(--color-battery);
+  --color-battery-bg: var(--color-battery-bg);
+
   --color-flag-bg: var(--color-flag-bg);
   --color-flag-fg: var(--color-flag-fg);
   --color-danger: var(--color-danger);
+  --color-danger-bg: var(--color-danger-bg);
 
   --radius-card: var(--radius-card);
   --radius-control: var(--radius-control);
   --radius-pill: var(--radius-pill);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+
+  /* Type scale sourced from the brand's Figma text styles. */
+  --text-h1: 3rem;
+  --text-h1--line-height: 1.08;
+  --text-h2: 2.5rem;
+  --text-h2--line-height: 1.12;
+  --text-h3: 2.0625rem;
+  --text-h3--line-height: 1.16;
+  --text-h4: 1.75rem;
+  --text-h4--line-height: 1.22;
+  --text-h5: 1.4375rem;
+  --text-h5--line-height: 1.28;
+
+  --text-lg: 1.1875rem;
+  --text-lg--line-height: 1.5;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.45;
+  --text-xs: 0.6875rem;
+  --text-xs--line-height: 1.4;
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-paper: #121212;
-    --color-surface: #1a1a1a;
-    --color-ink: #f3f2ee;
-    --color-muted: #a3a19a;
-    --color-line: #2d2c28;
-    --color-battery: #3fbf7f;
-    --color-battery-bg: #143324;
-    --color-certified: #f3f2ee;
-    --color-certified-fg: #121212;
-    --color-self: #f3f2ee;
-    --color-flag-bg: #2e2109;
-    --color-flag-fg: #f2b96a;
+    --color-paper: #0c0d0d;
+    --color-surface: #1f2020;
+    --color-ink: #f8fafa;
+    --color-muted: #acb3b3;
+    --color-line: #2e3030;
+    --color-line-subtle: #262828;
+
+    --color-brand: #22e1d2;
+    --color-brand-hover: #25f1e2;
+    --color-brand-fill: #0b6f68;
+    --color-brand-fill-hover: #118c82;
+    --color-brand-tint: #023431;
+    --color-brand-tint-fg: #25f1e2;
+    --color-brand-ring: #22e1d2;
+
+    --color-certified: #0b6f68;
+    --color-certified-fg: #ffffff;
+    --color-self: #cbd4d3;
+
+    --color-battery: #64dd82;
+    --color-battery-bg: #0e2b12;
+
+    --color-flag-bg: #2a230c;
+    --color-flag-fg: #ddd767;
+    --color-danger: #fd9e86;
+    --color-danger-bg: #4a1202;
   }
 }
 
-body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+@layer base {
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+  }
+
+  ::selection {
+    background: var(--color-brand-tint);
+    color: var(--color-brand-tint-fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

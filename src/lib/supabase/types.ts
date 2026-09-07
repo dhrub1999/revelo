@@ -73,14 +73,17 @@ export interface Database {
         Row: {
           id: string;
           role: Role;
+          display_name: string | null;
         };
         Insert: {
           id: string;
           role: Role;
+          display_name?: string | null;
         };
         Update: Partial<{
           id: string;
           role: Role;
+          display_name: string | null;
         }>;
         Relationships: [];
       };
@@ -132,13 +135,22 @@ export interface Database {
           year: number;
           km: number;
           type: BikeType;
-          frame_size: string;
+          /** Nullable — not collected at submission time; admin fills via Edit. */
+          frame_size: string | null;
           rider_height_range: string | null;
           price: number;
           listing_type: ListingType;
           photos: string[];
           condition_notes: ConditionNote[];
           battery_health: BatteryHealth | null;
+          /** Generated column: (battery_health->>'percent')::int. Read-only. */
+          battery_percent: number | null;
+          // Not in data-model.md — added in 0006_bikes_spec_fields.sql for
+          // P1's bike-detail spec grid, which needs them but data-model.md
+          // (and P2's admin edit fields) never defined a column for them.
+          range_km: number | null;
+          motor_spec: string | null;
+          serviced_note: string | null;
           status: BikeStatus;
           certified_live_since: string | null;
           created_at: string;
@@ -152,13 +164,16 @@ export interface Database {
           year: number;
           km: number;
           type: BikeType;
-          frame_size: string;
+          frame_size?: string | null;
           rider_height_range?: string | null;
           price: number;
           listing_type: ListingType;
           photos?: string[];
           condition_notes?: ConditionNote[];
           battery_health?: BatteryHealth | null;
+          range_km?: number | null;
+          motor_spec?: string | null;
+          serviced_note?: string | null;
           status?: BikeStatus;
           certified_live_since?: string | null;
           created_at?: string;
